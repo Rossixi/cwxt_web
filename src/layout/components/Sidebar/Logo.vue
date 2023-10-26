@@ -11,27 +11,34 @@
       </router-link>
     </transition>
   </div> -->
-  <div class="sidebar-logo-container" :class="{'collapse':collapse}" :style="{ backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }">
+  <div
+    class="sidebar-logo-container"
+    :class="{ collapse: collapse }"
+    :style="{ backgroundColor: sideTheme === 'theme-dark' ? variables.menuBackground : variables.menuLightBackground }"
+  >
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 v-else class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
+        <!-- <img v-if="logo" :src="logo" class="sidebar-logo" /> -->
+        <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">
+          {{ title }}
+        </h1>
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <img v-if="logo" :src="logo" class="sidebar-logo" />
-        <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">{{ title }} </h1>
+        <!-- <img v-if="logo" :src="logo" class="sidebar-logo" /> -->
+        <h1 class="sidebar-title" :style="{ color: sideTheme === 'theme-dark' ? variables.logoTitleColor : variables.logoLightTitleColor }">
+          {{ title }}
+        </h1>
       </router-link>
     </transition>
   </div>
 </template>
 
 <script>
-import logoImg from "@/assets/logo/logo.png";
-import variables from "@/assets/styles/variables.scss";
+import variables from '@/assets/styles/variables.scss'
 import defaultSettings from '@/settings'
 
 export default {
-  name: "SidebarLogo",
+  name: 'SidebarLogo',
   props: {
     collapse: {
       type: Boolean,
@@ -40,19 +47,18 @@ export default {
   },
   computed: {
     variables() {
-      return variables;
+      return variables
     },
     sideTheme() {
-      return this.$store.state.settings.sideTheme;
+      return this.$store.state.settings.sideTheme
     },
   },
   data() {
     return {
       title: defaultSettings.title,
-      logo: logoImg,
-    };
-  }
-};
+    }
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -68,10 +74,11 @@ export default {
 .sidebar-logo-container {
   position: relative;
   width: 100%;
-  height: 50px;
-  line-height: 50px;
+  height: 60px;
+  line-height: 60px;
   text-align: center;
   overflow: hidden;
+  border-bottom: 1px solid #6f6e6e;
 
   & .sidebar-logo-link {
     height: 100%;
@@ -89,10 +96,10 @@ export default {
       margin: 0;
       color: #fff;
       font-weight: 600;
-      line-height: 50px;
-      font-size: 14px;
+      line-height: 70px;
+      font-size: 16px;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
-      vertical-align: middle;
+      vertical-align: baseline;
     }
   }
 

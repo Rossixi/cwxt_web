@@ -15,9 +15,9 @@ module.exports = {
     sourceMap: process.env.NODE_ENV == 'production' ? false : true, //开启css  source maps功能，前端可以看到css具体的行数
     loaderOptions: {
       sass: {
-        sassOptions: { outputStyle: "expanded" }
-      }
-    }
+        sassOptions: { outputStyle: 'expanded' },
+      },
+    },
   },
   // 部署生产环境和开发环境下的URL。
   // 默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上
@@ -39,42 +39,39 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: 'http://localhost:8888/', // 后端接口地址
+        target: 'http://192.168.1.19:8033/', // 后端接口地址
         changeOrigin: true,
         pathRewrite: {
-          ['^' + process.env.VUE_APP_BASE_API]: '' //需要rewrite的
-        }
+          ['^' + process.env.VUE_APP_BASE_API]: '', //需要rewrite的
+        },
       },
-			"msgHub": {
-				target: 'http://localhost:8888/msgHub',
-				ws: true,
-				changeOrigin: true,
-				pathRewrite: {
-          ['^/msgHub']: '' //需要rewrite的
-        }
-			}
+      msgHub: {
+        target: 'http://192.168.1.19:8033/msgHub',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^/msgHub']: '', //需要rewrite的
+        },
+      },
     },
-    disableHostCheck: true
+    disableHostCheck: true,
   },
   configureWebpack: {
     name: name,
     resolve: {
       //设置路径别名，@代表根目录， @代表 src/文件夹
       alias: {
-        '@': resolve('src')
-      }
+        '@': resolve('src'),
+      },
     },
-    plugins: []
+    plugins: [],
   },
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
     // set svg-sprite-loader
-    config.module
-      .rule('svg')
-      .exclude.add(resolve('src/assets/icons'))
-      .end()
+    config.module.rule('svg').exclude.add(resolve('src/assets/icons')).end()
     config.module
       .rule('icons')
       .test(/\.svg$/)
@@ -83,51 +80,49 @@ module.exports = {
       .use('svg-sprite-loader')
       .loader('svg-sprite-loader')
       .options({
-        symbolId: 'icon-[name]'
+        symbolId: 'icon-[name]',
       })
       .end()
 
-    config
-      .when(process.env.NODE_ENV !== 'development',
-        config => {
-          config
-            .plugin('ScriptExtHtmlWebpackPlugin')
-            .after('html')
-            .use('script-ext-html-webpack-plugin', [{
-              // `runtime` must same as runtimeChunk name. default is `runtime`
-              inline: /runtime\..*\.js$/
-            }])
-            .end()
-          config
-            .optimization.splitChunks({
-              chunks: 'all',
-              cacheGroups: {
-                libs: {
-                  name: 'chunk-libs',
-                  test: /[\\/]node_modules[\\/]/,
-                  priority: 10,
-                  chunks: 'initial' // only package third parties that are initially dependent
-                },
-                elementUI: {
-                  name: 'chunk-elementUI', // split elementUI into a single package
-                  priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
-                  test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
-                },
-                commons: {
-                  name: 'chunk-commons',
-                  test: resolve('src/components'), // can customize your rules
-                  minChunks: 3, //  minimum common number
-                  priority: 5,
-                  reuseExistingChunk: true
-                }
-              }
-            })
-          config.optimization.runtimeChunk('single'),
+    config.when(process.env.NODE_ENV !== 'development', (config) => {
+      config
+        .plugin('ScriptExtHtmlWebpackPlugin')
+        .after('html')
+        .use('script-ext-html-webpack-plugin', [
           {
-            from: path.resolve(__dirname, './public/robots.txt'), //防爬虫文件
-            to: './' //到根目录下
-          }
+            // `runtime` must same as runtimeChunk name. default is `runtime`
+            inline: /runtime\..*\.js$/,
+          },
+        ])
+        .end()
+      config.optimization.splitChunks({
+        chunks: 'all',
+        cacheGroups: {
+          libs: {
+            name: 'chunk-libs',
+            test: /[\\/]node_modules[\\/]/,
+            priority: 10,
+            chunks: 'initial', // only package third parties that are initially dependent
+          },
+          elementUI: {
+            name: 'chunk-elementUI', // split elementUI into a single package
+            priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+            test: /[\\/]node_modules[\\/]_?element-ui(.*)/, // in order to adapt to cnpm
+          },
+          commons: {
+            name: 'chunk-commons',
+            test: resolve('src/components'), // can customize your rules
+            minChunks: 3, //  minimum common number
+            priority: 5,
+            reuseExistingChunk: true,
+          },
+        },
+      })
+      config.optimization.runtimeChunk('single'),
+        {
+          from: path.resolve(__dirname, './public/robots.txt'), //防爬虫文件
+          to: './', //到根目录下
         }
-      )
-  }
+    })
+  },
 }

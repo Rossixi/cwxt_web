@@ -2,10 +2,7 @@
 
 ```bash
 # 克隆项目
-git clone https://gitee.com/izory/ZrAdminNetCore
-
-# 进入项目目录
-cd ZR.Vue
+git clone https://github.com/Rossixi/cwxt_web
 
 # 安装依赖
 npm install

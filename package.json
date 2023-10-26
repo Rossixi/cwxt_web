@@ -1,7 +1,7 @@
 {
-  "name": "zradmin",
-  "description": "ZrAdmnin.NET后台管理",
-  "author": "ZR",
+  "name": "cwxt",
+  "description": "水利水电学院财务系统",
+  "author": "Rossi",
   "scripts": {
     "dev": "vue-cli-service serve",
     "build:prod": "vue-cli-service build",

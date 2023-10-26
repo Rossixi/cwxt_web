@@ -8,41 +8,41 @@
     <top-nav id="topmenu-container" class="topmenu-container" v-if="topNav" />
 
     <div class="right-menu">
-      <template v-if="device!=='mobile'">
-        <search id="header-search" class="right-menu-item" />
+      <template v-if="device !== 'mobile'">
+        <!-- <search id="header-search" class="right-menu-item" /> -->
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
         <!-- <el-tooltip content="布局大小" effect="dark" placement="bottom"> -->
-        <size-select id="size-select" class="right-menu-item hover-effect" />
+        <!-- <size-select id="size-select" class="right-menu-item hover-effect" /> -->
         <!-- </el-tooltip> -->
-        <el-tooltip content="源码地址" effect="dark" placement="bottom">
+        <!-- <el-tooltip content="源码地址" effect="dark" placement="bottom">
           <zr-git class="right-menu-item hover-effect" />
-        </el-tooltip>
-        <el-tooltip content="文档地址" effect="dark" placement="bottom">
+        </el-tooltip> -->
+        <!-- <el-tooltip content="文档地址" effect="dark" placement="bottom">
           <zr-doc class="right-menu-item hover-effect" />
-        </el-tooltip>
+        </el-tooltip> -->
       </template>
-			<!-- 通知 -->
-      <div class="right-menu-item">
+      <!-- 通知 -->
+      <!-- <div class="right-menu-item">
         <el-popover placement="bottom" trigger="click" v-model="isShowUserNewsPopover" width="300" popper-class="el-popover-pupop-user-news">
           <el-badge @click.stop="isShowUserNewsPopover = !isShowUserNewsPopover" :is-dot="true" slot="reference">
-            <i class="el-icon-bell" title="通知"></i>
+            <i class="el-icon-bell" title="通知" style="cursor: pointer"></i>
           </el-badge>
           <Notice v-show="isShowUserNewsPopover" />
         </el-popover>
-      </div>
+      </div> -->
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar" class="user-avatar">
+          <img :src="avatar" class="user-avatar" />
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/user/profile">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
-          <el-dropdown-item @click.native="setting = true">
+          <!-- <el-dropdown-item @click.native="setting = true">
             <span>布局设置</span>
-          </el-dropdown-item>
+          </el-dropdown-item> -->
           <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
           </el-dropdown-item>
@@ -53,16 +53,14 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import Breadcrumb from "@/components/Breadcrumb";
-import TopNav from "@/components/TopNav";
-import Hamburger from "@/components/Hamburger";
-import Screenfull from "@/components/Screenfull";
-import SizeSelect from "@/components/SizeSelect";
-import Search from "@/components/HeaderSearch";
-import ZrGit from "@/components/Zr/Git";
-import ZrDoc from "@/components/Zr/Doc";
-import Notice from "@/components/Notice/Index.vue";
+import { mapGetters } from 'vuex'
+import Breadcrumb from '@/components/Breadcrumb'
+import TopNav from '@/components/TopNav'
+import Hamburger from '@/components/Hamburger'
+import Screenfull from '@/components/Screenfull'
+import SizeSelect from '@/components/SizeSelect'
+import Search from '@/components/HeaderSearch'
+import Notice from '@/components/Notice/Index.vue'
 
 export default {
   components: {
@@ -72,51 +70,49 @@ export default {
     Screenfull,
     SizeSelect,
     Search,
-    ZrGit,
-    ZrDoc,
     Notice,
   },
   data() {
     return {
       isShowUserNewsPopover: false,
-    };
+    }
   },
   computed: {
-    ...mapGetters(["sidebar", "avatar", "device"]),
+    ...mapGetters(['sidebar', 'avatar', 'device']),
     setting: {
       get() {
-        return this.$store.state.settings.showSettings;
+        return this.$store.state.settings.showSettings
       },
       set(val) {
-        this.$store.dispatch("settings/changeSetting", {
-          key: "showSettings",
+        this.$store.dispatch('settings/changeSetting', {
+          key: 'showSettings',
           value: val,
-        });
+        })
       },
     },
     topNav: {
       get() {
-        return this.$store.state.settings.topNav;
+        return this.$store.state.settings.topNav
       },
     },
   },
   methods: {
     toggleSideBar() {
-      this.$store.dispatch("app/toggleSideBar");
+      this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
-      this.$confirm("确定注销并退出系统吗？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+      this.$confirm('确定注销并退出系统吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
       }).then(() => {
-        this.$store.dispatch("LogOut").then(() => {
-          location.href = process.env.VUE_APP_ROUTER_PREFIX + "index";
-        });
-      });
+        this.$store.dispatch('LogOut').then(() => {
+          location.href = process.env.VUE_APP_ROUTER_PREFIX + 'index'
+        })
+      })
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>

@@ -27,15 +27,15 @@
           <img :src="codeUrl" @click="getCode" class="login-code-img" />
         </div>
       </el-form-item>
-      <el-checkbox v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px">记住密码</el-checkbox>
-      <el-form-item style="width: 100%">
+      <el-checkbox v-model="loginForm.rememberMe">记住密码</el-checkbox>
+      <el-form-item style="width: 40%; margin: 10px auto">
         <el-button :loading="loading" size="medium" type="primary" style="width: 100%" @click.native.prevent="handleLogin">
           <span v-if="!loading">登 录</span>
           <span v-else>登 录 中...</span>
         </el-button>
-        <div style="float: right">
+        <!-- <div style="float: right">
           <router-link class="link-type" :to="'/register'">还没有账号？立即注册</router-link>
-        </div>
+        </div> -->
       </el-form-item>
     </el-form>
     <!--  底部  -->
@@ -160,7 +160,7 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-image: url('../assets/image/login-background.jpg');
+  background-image: url('../assets/image/background.jpg');
   background-size: cover;
   // background-color: rgba(56, 157, 170, 0.82);
 }
@@ -168,23 +168,23 @@ export default {
   margin: 0px auto 30px auto;
   text-align: center;
   // color: #707070;
-  color: #fff;
+  color: #151313;
 }
 
 .login-form {
   border-radius: 6px;
   // background: #ffffff;
-  background-color: hsla(0, 0%, 100%, 0.3);
-  width: 310px;
-  padding: 25px 25px 5px 25px;
+  background-color: hsla(0, 0%, 100%, 0.8);
+  width: 450px;
+  padding: 25px 45px 5px 45px;
   .el-input {
-    height: 38px;
+    height: 30px;
     input {
-      height: 38px;
+      height: 30px;
     }
   }
   .input-icon {
-    height: 39px;
+    height: 30px;
     width: 14px;
     margin-left: 2px;
   }
@@ -204,13 +204,13 @@ export default {
   }
 }
 .el-login-footer {
-  height: 40px;
-  line-height: 40px;
+  height: 30px;
+  line-height: 30px;
   position: fixed;
   bottom: 0;
   width: 100%;
   text-align: center;
-  color: #fff;
+  color: #1b1919;
   font-family: Arial;
   font-size: 12px;
   letter-spacing: 1px;

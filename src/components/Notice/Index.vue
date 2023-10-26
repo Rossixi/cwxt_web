@@ -24,30 +24,27 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex'
 export default {
-  name: "noticeIndex",
+  name: 'noticeIndex',
   data() {
     return {
       dataList: [],
-    };
+    }
   },
-	computed: {
-		...mapGetters(['noticeList'])
-	},
-  mounted() {
+  computed: {
+    ...mapGetters(['noticeList']),
   },
+  mounted() {},
   methods: {
     // 全部已读点击
-    onAllReadClick() {
-      
-    },
+    onAllReadClick() {},
     // 前往通知中心点击
     onGoToGiteeClick() {
-      window.open("https://gitee.com/izory/ZrAdminNetCore");
+      window.open('https://github.com/Rossixi/cwxt_web')
     },
   },
-};
+}
 </script>
 
 <style scoped lang="scss">

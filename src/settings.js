@@ -2,8 +2,8 @@ module.exports = {
   /**
    * 框架版本号
    */
-  version: '3.8.1',
-  title: 'ZrAdmin.NET-后台管理',
+  version: '1.0.1',
+  title: '水利水电职业学院财务系统',
   /**
    * 主题颜色
    */
@@ -11,7 +11,7 @@ module.exports = {
   /**
    * 侧边栏主题 深色主题theme-dark，浅色主题theme-light
    */
-  sideTheme: 'theme-light',
+  sideTheme: 'theme-dark',
 
   /**
    * 显示是否系统布局配置
@@ -48,5 +48,5 @@ module.exports = {
    * If you want to also use it in dev, you can pass ['production', 'development']
    */
   errorLog: 'production',
-  copyRight: 'Copyright ©2023 www.izhaorui.cn All Rights Reserved.'
+  copyRight: 'Copyright ©2023 同方知网 All Rights Reserved.',
 }
