@@ -177,15 +177,26 @@ export default {
   background-color: hsla(0, 0%, 100%, 0.8);
   width: 450px;
   padding: 25px 45px 5px 45px;
+
+  .el-form-item--small.el-form-item {
+    margin-bottom: 15px;
+  }
+
   .el-input {
-    height: 30px;
+    height: 38px;
     input {
-      height: 30px;
+      height: 38px;
     }
   }
+
+  ::v-deep .el-input__inner {
+    height: 36px;
+    line-height: 36px;
+    font-size: 16px;
+  }
   .input-icon {
-    height: 30px;
-    width: 14px;
+    height: 38px;
+    width: 16px;
     margin-left: 2px;
   }
 }

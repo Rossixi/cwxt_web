@@ -95,11 +95,11 @@
           <el-table-column label="编号" align="center" prop="userId" width="60" />
           <el-table-column label="登录名" align="center" prop="userName" :show-overflow-tooltip="true" />
           <el-table-column label="昵称" align="center" prop="nickName" :show-overflow-tooltip="true" />
-          <el-table-column label="头像" prop="avatar">
+          <!-- <el-table-column label="头像" prop="avatar">
             <template slot-scope="scope">
               <el-image :src="scope.row.avatar" :preview-src-list="[scope.row.avatar]"></el-image>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column label="部门" align="center" prop="deptName" :show-overflow-tooltip="true" />
           <el-table-column label="手机号码" align="center" prop="phonenumber" width="120" />
           <el-table-column label="用户状态" align="center">

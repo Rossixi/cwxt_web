@@ -2,108 +2,37 @@
   <div class="app-container home">
     <el-row :gutter="20">
       <el-col :lg="16" :sm="24">
-        <h2>ZRAdmin.NET后台管理框架</h2>
-        <p>
-          ZRAdmin.NET借鉴了很多开源项目的优点，让你开发Web管理系统更简单，所以我也把它给开源了（前端
-          <code>vue页面</code>主要参考若依，在此表示感谢.)
-        </p>
-        <p>代码完全免费开源，易读易懂、界面简洁美观，给你的项目多一种选择与参考。</p>
-        <p>
-          <b>当前版本:</b> <span>v{{ version }}</span>
-          <el-link
-            class="ml10"
-            type="primary"
-            size="mini"
-            icon="el-icon-document"
-            plain
-            @click="goTarget('http://www.izhaorui.cn/doc/changelog.html#' + version)"
-            >更新日志
-          </el-link>
-        </p>
-        <p>
-          <el-button type="primary" size="mini" icon="el-icon-cloudy" plain @click="goTarget('https://gitee.com/izory/ZrAdminNetCore')"
-            >访问码云
-          </el-button>
-          <el-button type="primary" size="mini" icon="el-icon-cloudy" plain @click="goTarget('https://github.com/izhaorui/ZrAdmin.NET')"
-            >Github
-          </el-button>
-        </p>
-        <p></p>
-        <h3>如果觉得不错欢迎给个⭐Star⭐收藏一下 ，这样作者才有继续免费下去的动力，谢谢！</h3>
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span style="font-size: 18px">个人信息</span>
+            <el-button style="float: right; padding: 3px 0" type="text"><i class="el-icon-edit"></i></el-button>
+          </div>
+          <div v-for="o in 6" :key="o" class="text item">
+            {{ '列表内容 ' + o }}
+          </div>
+        </el-card>
       </el-col>
       <el-col :sm="24" :lg="8">
-        <el-row>
-          <h2>技术选型</h2>
-          <el-col :span="10">
-            <h4>后端技术</h4>
-            <ul>
-              <li>NET5</li>
-              <li>JWT</li>
-              <li>SqlSugar</li>
-              <li>Quartz.Net</li>
-              <li>MySql</li>
-              <li>Mapster</li>
-              <li>Epplus</li>
-              <li>Signalr</li>
-              <li>...</li>
-            </ul>
-          </el-col>
-          <el-col :span="10">
-            <h4>前端技术</h4>
-            <ul>
-              <li>Vue</li>
-              <li>Vuex</li>
-              <li>Element-ui</li>
-              <li>Axios</li>
-              <li>Sass</li>
-              <li>Quill</li>
-              <li>...</li>
-            </ul>
-          </el-col>
-        </el-row>
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span>卡片名称</span>
+            <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+          </div>
+          <div v-for="o in 4" :key="o" class="text item">
+            {{ '列表内容 ' + o }}
+          </div>
+        </el-card>
       </el-col>
     </el-row>
     <el-divider />
     <el-row :gutter="20" class="mt10">
-      <el-col :sm="24" :lg="8">
+      <el-col>
         <el-card>
-          <div slot="header" class="clearfix">
-            <span>联系信息</span>
-          </div>
-          <div class="body">
-            <p>
-              <i class="el-icon-s-promotion"></i>官网：
-              <el-link href="http://www.izhaorui.cn/doc" target="_blank">http://www.izhaorui.cn/doc</el-link>
-            </p>
-          </div>
-          <div class="body">
-            <p>
-              <i class="el-icon-user-solid"></i>QQ群：<a
-                href="https://qm.qq.com/cgi-bin/qm/qr?k=Y__-fTGo_K2UIo3nWz7QnvS8LoRfPWKm&authKey=/ldXxiuolv80PF4yC8VtLk/TvAYbIhm2LKP8YVHCxAk+x2I+iqPAM1H/IsxQ+0gC&noverify=0"
-                target="_black"
-                >191349103</a
-              >
-            </p>
-          </div>
+          <el-tabs v-model="activeName" @tab-click="tabClick">
+            <el-tab-pane label="代办审批" name="first">用户管理</el-tab-pane>
+            <el-tab-pane label="已办审批" name="second">配置管理</el-tab-pane>
+          </el-tabs>
         </el-card>
-      </el-col>
-      <el-col :sm="24" :lg="8">
-        <el-card>
-          <div slot="header" class="clearfix">
-            <span>捐赠支持</span>
-          </div>
-          <div class="body">
-            <div style="color: red">打赏作者喝杯咖啡表示鼓励</div>
-            <img src="@/assets/image/reward.jpg" alt="donate" width="100%" />
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="10">
-        <!-- <el-card>
-          <div slot="header" class="clearfix">
-            <span></span>
-          </div>
-        </el-card> -->
       </el-col>
     </el-row>
     <el-divider />
@@ -118,11 +47,17 @@ export default {
     return {
       // 版本号
       version: defaultSettings.version,
+      activeName: 'first',
     }
   },
   methods: {
     goTarget(href) {
       window.open(href, '_blank')
+    },
+
+    // 审批切换
+    tabClick(tab, event) {
+      console.log(tab, event)
     },
   },
 }
