@@ -1,0 +1,245 @@
+<template>
+  <div class="assignment">
+    <h2>新增资产配置限额表</h2>
+    <div class="first-line">
+      <div class="xibu-name">
+        <p>系部名称：（单位签字盖章）</p>
+      </div>
+      <div class="tiankong"></div>
+      <div class="tips">
+        <p>
+          注：单件资产超20万以上（包含20万）必须提供配置说明。（有无配置说明请在附件里标注清楚，配置说明单独WORD页交电子档和纸质档，并盖章签字。）
+        </p>
+      </div>
+    </div>
+    <el-table :data="assetForm" border show-summary :summary-method="getSummaries" :cell-style="{ 'text-align': 'center' }" style="width: 100%">
+      <el-table-column type="index" label="序号" min-width="5%"> </el-table-column>
+      <el-table-column label="资产名称" min-width="16%">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.AssetName"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否软件" min-width="8%">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.IsSoftWare" placeholder="">
+            <el-option value="是"> </el-option>
+            <el-option value="否"> </el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+      <el-table-column label="规格型号" min-width="15%">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.AssetType"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="新增数量" min-width="7%">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.AddNum" type="number"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="单价（万元）" min-width="12%">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.UnitPrice" type="number"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="新增总金额（万元）" min-width="12%">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.TotalPrice" type="number"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" min-width="18%">
+        <template slot-scope="scope">
+          <el-input v-model="scope.row.Remark"></el-input>
+        </template>
+      </el-table-column>
+      <el-table-column label="附件（有/无）" min-width="8%">
+        <template slot-scope="scope">
+          <el-select v-model="scope.row.IsAttachment" placeholder="">
+            <el-option value="有"> </el-option>
+            <el-option value="无"> </el-option>
+          </el-select>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="btns">
+      <button class="submit" @click="save">保存</button>
+      <button @click="goBack()">返回</button>
+    </div>
+  </div>
+</template>
+
+<script>
+import fujianMixin from './mixin/fujianMixin'
+export default {
+  name: 'assetPaper',
+  mixins: [fujianMixin],
+  props: {
+    // activeNum: {
+    //   type: Number,
+    //   default: 0,
+    // },
+    form: {
+      type: Array,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      assetForm: null,
+    }
+  },
+
+  mounted() {
+    this.assetForm = JSON.parse(JSON.stringify(this.form))
+    console.log(this.assetForm)
+  },
+
+  methods: {
+    getSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        if (index === 1) {
+          sums[index] = '合计'
+          return
+        }
+        if (index === 6) {
+          const values = data.map((item) => {
+            return parseFloat(item.TotalPrice)
+          })
+          if (!values.every((value) => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) {
+                return prev + curr
+              } else {
+                return prev
+              }
+            }, 0)
+            sums[index] += ' 万元'
+          } else {
+            sums[index] = ''
+          }
+        }
+      })
+
+      return sums
+    },
+
+    save() {
+      this.$emit('paper-data', this.assetForm, 'two')
+    },
+
+    // 判断是否修改
+    isEdit() {
+      return this.deepCompare(this.assetForm, this.form)
+    },
+
+    goBack() {
+      this.$emit('paper-cancel')
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.assignment {
+  width: 96%;
+  margin: 20px auto;
+  min-height: 600px;
+
+  h2 {
+    text-align: center;
+    background: #0052d9;
+    color: #fff;
+    line-height: 56px;
+    margin-bottom: 0;
+    letter-spacing: 5px;
+  }
+
+  .first-line {
+    width: 100%;
+    height: 88px;
+    display: flex;
+
+    .xibu-name {
+      height: 100%;
+      width: 20%;
+      border: 1px solid #dcdfe6;
+      border-bottom: 0;
+
+      p {
+        margin: 0 20px;
+        line-height: 88px;
+      }
+    }
+
+    .tiankong {
+      width: 30%;
+      height: 100%;
+      border: 1px solid #dcdfe6;
+      border-left: 0;
+      border-bottom: 0;
+    }
+
+    .tips {
+      width: 50%;
+      height: 100%;
+      border: 1px solid #dcdfe6;
+      border-left: 0;
+      border-bottom: 0;
+
+      p {
+        margin: 20px 30px;
+        font-size: 14px;
+        line-height: 24px;
+        color: #898b8e;
+      }
+    }
+  }
+
+  ::v-deep {
+    .el-input__inner {
+      border: 0;
+    }
+
+    .el-table th.el-table__cell {
+      background-color: #f0f1f5;
+      padding-left: 10px;
+      font-size: 14px;
+      color: #606266;
+    }
+
+    .el-table__header-wrapper tbody td.el-table__cell,
+    .el-table__footer-wrapper tbody td.el-table__cell {
+      padding-left: 10px;
+      font-size: 14px;
+    }
+  }
+
+  .pro-attr {
+    border: 1px solid #dcdfe6;
+  }
+
+  .btns {
+    width: 200px;
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      width: 88px;
+      height: 32px;
+      border: 0;
+      padding: 0;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .submit {
+      background: #0052d9;
+      color: #fff;
+    }
+  }
+}
+</style>

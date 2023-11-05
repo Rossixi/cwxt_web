@@ -25,12 +25,12 @@
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="tree" />所属部门
-                <div class="pull-right">{{ user.deptName }} / {{ postGroup }}</div>
+                <div class="pull-right">{{ user.deptName }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="peoples" />所属角色
                 <div class="pull-right">
-                  <span v-for="item in roles" :key="item">{{item}}</span>
+                  <span v-for="item in roles" :key="item">{{ item }}</span>
                 </div>
               </li>
               <li class="list-group-item">
@@ -77,9 +77,9 @@ export default {
     return {
       user: {},
       roles: [],
-      postGroup: '',
+      // postGroup: '',
       activeTab: 'userinfo',
-      activeName: 'first'
+      activeName: 'first',
     }
   },
   created() {
@@ -91,13 +91,13 @@ export default {
         this.user = response.data.user
         this.roles = response.data.roles
         this.roleGroup = response.data.roleGroup
-        this.postGroup = response.data.postGroup
+        // this.postGroup = response.data.postGroup
       })
     },
     handleTabClick(tab, event) {
       console.log(tab, event)
-    }
-  }
+    },
+  },
 }
 </script>
 <style scoped>

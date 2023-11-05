@@ -4,11 +4,36 @@
       <el-col :lg="16" :sm="24">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
-            <span style="font-size: 18px">个人信息</span>
-            <el-button style="float: right; padding: 3px 0" type="text"><i class="el-icon-edit"></i></el-button>
+            <span style="font-size: 18px; font-weight: 700">个人信息</span>
+            <router-link to="/user/profile">
+              <el-button style="float: right; padding: 3px 0" type="text"><i class="el-icon-edit"></i></el-button>
+            </router-link>
           </div>
-          <div v-for="o in 6" :key="o" class="text item">
-            {{ '列表内容 ' + o }}
+          <div class="personal-infor">
+            <div class="infor-item">
+              <h3>姓名</h3>
+              <p>{{ user.nickName }}</p>
+            </div>
+            <div class="infor-item">
+              <h3>部门</h3>
+              <p>{{ user.deptName }}</p>
+            </div>
+            <div class="infor-item">
+              <h3>办公邮箱</h3>
+              <p>{{ user.email }}</p>
+            </div>
+            <div class="infor-item">
+              <h3>手机</h3>
+              <p>{{ user.phonenumber }}</p>
+            </div>
+            <div class="infor-item">
+              <h3>所属权限组</h3>
+              <p>{{ roles[0] }}</p>
+            </div>
+            <div class="infor-item">
+              <h3>是否参与项目任务审核</h3>
+              <p>{{ user.isReview }}</p>
+            </div>
           </div>
         </el-card>
       </el-col>
@@ -41,6 +66,8 @@
 
 <script>
 const defaultSettings = require('@/settings.js')
+import { getUserProfile } from '@/api/system/user'
+
 export default {
   name: 'index',
   data() {
@@ -48,11 +75,22 @@ export default {
       // 版本号
       version: defaultSettings.version,
       activeName: 'first',
+      user: {},
+      roles: [],
     }
   },
+  created() {
+    this.getUser()
+  },
   methods: {
-    goTarget(href) {
-      window.open(href, '_blank')
+    // 获取用户信息
+    getUser() {
+      getUserProfile().then((response) => {
+        this.user = response.data.user
+        this.roles = response.data.roles
+        // this.roleGroup = response.data.roleGroup
+        // this.postGroup = response.data.postGroup
+      })
     },
 
     // 审批切换
@@ -71,11 +109,22 @@ export default {
   line-height: 30px;
 }
 .home {
-  blockquote {
-    padding: 10px 20px;
-    margin: 0 0 20px;
-    font-size: 17.5px;
-    border-left: 5px solid #eee;
+  .personal-infor {
+    display: flex;
+    flex-wrap: wrap;
+
+    .infor-item {
+      width: 25%;
+      height: 100px;
+
+      h3 {
+        color: #b4b5b7;
+      }
+
+      p {
+        font-size: 16px;
+      }
+    }
   }
   hr {
     margin-top: 20px;
