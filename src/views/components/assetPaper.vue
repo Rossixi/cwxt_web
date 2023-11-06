@@ -136,7 +136,7 @@ export default {
     },
 
     goBack() {
-      this.$emit('paper-cancel')
+      this.$emit('paper-cancel', '2')
     },
   },
 }

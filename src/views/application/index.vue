@@ -38,7 +38,7 @@
           <div class="page" @click="gotoPage('3')">
             <div class="page-stated" v-if="thirdCompleted">已填写</div>
             <div class="page-unstate" v-else>未填写</div>
-            <div class="img-stated" v-if="secondCompleted">
+            <div class="img-stated" v-if="thirdCompleted">
               <img src="@/assets/image/page-stated.png" alt="" />
             </div>
             <div class="img-unstate" v-else>
@@ -71,16 +71,17 @@
         </div>
         <h3>其它附件</h3>
         <el-button plain icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">上传文件</el-button>
+        <file-list ref="fileListRef" :list="pageForm.fileList" :showDel="true" @delete-file="deleteFile"></file-list>
         <h3 style="margin-top: 30px">项目申报信息</h3>
         <el-form ref="pageFormRef" :model="pageForm" label-width="110px">
           <el-row :gutter="50">
             <el-col :lg="8"
-              ><el-form-item label="项目名称"> <el-input v-model="pageForm.name" disabled></el-input> </el-form-item
+              ><el-form-item label="项目名称"> <el-input v-model="pageForm.proMainData.ProName" disabled></el-input> </el-form-item
             ></el-col>
             <el-col :lg="8"
               ><el-form-item label="项目起始时间"
                 ><el-date-picker
-                  v-model="pageForm.time"
+                  v-model="pageForm.proMainData.ProTimes"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   format="yyyy-MM-dd"
@@ -96,7 +97,7 @@
             <el-col :lg="8"
               ><el-form-item label="申报时间">
                 <el-date-picker
-                  v-model="pageForm.declarationDate"
+                  v-model="pageForm.proMainData.AppTime"
                   type="date"
                   value-format="yyyy-MM-dd"
                   format="yyyy-MM-dd"
@@ -106,21 +107,21 @@
                 </el-date-picker> </el-form-item
             ></el-col>
             <el-col :lg="8"
-              ><el-form-item label="申报部门"> <el-input v-model="pageForm.partment" disabled></el-input> </el-form-item
+              ><el-form-item label="申报部门"> <el-input v-model="pageForm.proMainData.DeptName" disabled></el-input> </el-form-item
             ></el-col>
           </el-row>
           <el-row :gutter="50">
             <el-col :lg="8"
-              ><el-form-item label="申报金额"> <el-input v-model="pageForm.money" disabled></el-input> </el-form-item
+              ><el-form-item label="申报金额"> <el-input v-model="pageForm.proMainData.AppAmount" disabled></el-input> </el-form-item
             ></el-col>
             <el-col :lg="8"
-              ><el-form-item label="党委会审议金额"> <el-input v-model="pageForm.reviewMoney" disabled></el-input> </el-form-item
+              ><el-form-item label="党委会审议金额"> <el-input v-model="pageForm.proMainData.ReviewAmount" disabled></el-input> </el-form-item
             ></el-col>
           </el-row>
         </el-form>
         <div class="btns">
           <button class="submit" @click="submit">提交</button>
-          <button @click="cancel">取消</button>
+          <button @click="cancel">返回</button>
         </div>
       </div>
     </div>
@@ -130,28 +131,21 @@
       <el-upload
         name="file"
         ref="upload"
-        :limit="1"
-        accept=".xlsx, .xls"
+        accept="*"
         :headers="upload.headers"
-        :action="upload.url + '?updateSupport=' + upload.updateSupport"
+        :action="upload.url + '?target=' + upload.updateSupport"
         :disabled="upload.isUploading"
         :on-progress="handleFileUploadProgress"
         :on-success="handleFileSuccess"
-        :auto-upload="false"
         drag
       >
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
         <div class="el-upload__tip text-center" slot="tip">
-          <div class="el-upload__tip" slot="tip"><el-checkbox v-model="upload.updateSupport" /> 是否更新已经存在的用户数据</div>
-          <span>仅允许导入xls、xlsx格式文件。</span>
-          <el-link type="primary" :underline="false" style="font-size: 12px; vertical-align: baseline" @click="importTemplate">下载模板</el-link>
+          <div class="el-upload__tip" slot="tip">单次可上传一个文件</div>
+          <span>如需上传多个文件请分批上传</span>
         </div>
       </el-upload>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitFileForm">确 定</el-button>
-        <el-button @click="upload.open = false">取 消</el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -161,10 +155,12 @@ const defaultSettings = require('@/settings.js')
 import { getToken } from '@/utils/auth'
 import myStep from '../components/myStep.vue'
 import fuJian from '../components/fuJian.vue'
+import fileList from '@/components/FileUpload/fileList.vue'
+import { submitProject } from '@/api/project/application'
 
 export default {
   name: 'application',
-  components: { myStep, fuJian },
+  components: { myStep, fuJian, fileList },
   data() {
     return {
       showDialog: true,
@@ -184,21 +180,213 @@ export default {
         // 是否禁用上传
         isUploading: false,
         // 是否更新已经存在的用户数据
-        updateSupport: 0,
+        updateSupport: 'application',
         // 设置上传的请求头部
         headers: { Authorization: 'Bearer ' + getToken() },
         // 上传的地址
-        url: process.env.VUE_APP_BASE_API + '/system/user/importData',
+        url: process.env.VUE_APP_BASE_API + '/project/file/UploadFile',
       },
       pageForm: {
-        name: '',
-        time: ['2023-11-23', '2023-11-28'],
-        declarationDate: '2023-11-23',
-        partment: '',
-        money: '',
-        reviewMoney: '',
         assignmentForm: {
-          SchoolName: '青岛大学',
+          SchoolName: '',
+          ProName: '',
+          ProNo: '',
+          DeptName: '',
+          Address: '',
+          HeaderName: '',
+          HeaderTel: null,
+          ProAttr: '',
+          ProNecessity: '',
+          ProFeasibility: '',
+          ProContentAndStatement: '',
+          AppAmount: null,
+          EconomicClf: [{ economic: '', money: null }],
+          ProPlan: [{ startTime: '', endTime: '', content: '' }],
+          ExpectedRevenue: '',
+          SchoolOpinion: '',
+        },
+        assetForm: [
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+        ],
+        taskForm: [
+          {
+            ProContent: '',
+            ProCategory: '',
+            ProNature: '',
+            BudgetAmount: null,
+            AddSchoolBuildArea: null,
+            RenovationSchoolBuildArea: null,
+            Equipment: null,
+            Teachers: null,
+            Books: null,
+            AddSportsFieldArea: null,
+            Trainees: null,
+            SdqngwMeters: null,
+            InformationSystem: null,
+            RoadArea: null,
+          },
+        ],
+        applicationForm: {
+          SpecialName: '',
+          SpecialYear: '',
+          CentralCompetent: '',
+          ProvincialFinance: '',
+          AnnualAmount: null,
+          CentralSubsidies: null,
+          AnnualTarget: '',
+          target: [],
+        },
+        // 主页数据
+        proMainData: {
+          ProName: '',
+          AppTime: '',
+          DeptName: '',
+          AppAmount: '',
+          ReviewAmount: '',
+          ProTimes: [],
+          CurrentState: '',
+          MeetingMinutes: '',
+          NickName: '',
+        },
+        // 展示上传文件列表
+        fileList: [],
+      },
+    }
+  },
+  created() {},
+  methods: {
+    closeDialog() {
+      this.showDialog = false
+    },
+
+    // 点击填写文档
+    gotoPage(val) {
+      this.activeFj = val
+      this.showFuJian = true
+    },
+
+    // 获取page数据
+    getDataPage(e1, e2) {
+      switch (e2) {
+        case 'one':
+          this.pageForm.assignmentForm = JSON.parse(JSON.stringify(e1))
+          this.firstCompleted = true
+          this.pageForm.proMainData.ProName = this.pageForm.assignmentForm.ProName
+          this.pageForm.proMainData.AppTime = new Date()
+          this.pageForm.proMainData.ProTimes.push(this.pageForm.assignmentForm.ProPlan[0].startTime)
+          this.pageForm.proMainData.ProTimes.push(this.pageForm.assignmentForm.ProPlan[this.pageForm.assignmentForm.ProPlan.length - 1].endTime)
+
+          this.pageForm.proMainData.DeptName = this.pageForm.assignmentForm.DeptName
+          this.pageForm.proMainData.AppAmount = this.pageForm.assignmentForm.AppAmount
+          // 审议金额待定
+          // this.proMainData.ReviewAmount = this.pageForm.assignmentForm.AppAmount
+          break
+
+        case 'two':
+          this.pageForm.assetForm = JSON.parse(JSON.stringify(e1))
+          this.secondCompleted = true
+          break
+
+        case 'three':
+          this.pageForm.taskForm = JSON.parse(JSON.stringify(e1))
+          this.thirdCompleted = true
+          break
+
+        case 'four':
+          this.pageForm.applicationForm = JSON.parse(JSON.stringify(e1))
+          this.fourthCompleted = true
+          break
+
+        default:
+          break
+      }
+      this.$message({
+        type: 'success',
+        message: '保存成功!',
+      })
+      // this.showFuJian = e3
+      console.log(e1)
+    },
+
+    // 取消输入
+    cancelPaper() {
+      this.showFuJian = false
+    },
+
+    /** 上传操作 */
+    handleImport() {
+      this.upload.title = '上传文件'
+      this.upload.open = true
+    },
+
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false
+      this.upload.isUploading = false
+      this.$refs.upload.clearFiles()
+      // this.$alert(response.msg, '导入结果', { dangerouslyUseHTMLString: true })
+      if (response.code == 200) {
+        this.pageForm.fileList.push(response.data[0])
+        this.$refs.fileListRef.getFileList()
+        this.$message.success('上传成功')
+      } else {
+        this.$message.error('上传失败')
+      }
+    },
+
+    // 提交上传文件
+    submitFileForm() {
+      this.$refs.upload.submit()
+    },
+
+    // 删除文件
+    deleteFile(index) {
+      this.pageForm.fileList.splice(index, 1)
+    },
+
+    // 提交
+    submit() {
+      if (this.firstCompleted && this.secondCompleted && this.thirdCompleted && this.fourthCompleted) {
+        submitProject(this.pageForm).then((res) => {
+          console.log(res)
+          this.$message.success('提交成功！')
+          this.resetting()
+          this.showDialog = true
+        })
+      } else {
+        this.$message.error('请先填写附件')
+      }
+    },
+
+    // 取消
+    cancel() {
+      this.resetting()
+      this.showDialog = true
+    },
+
+    // 格式化数据
+    resetting() {
+      this.firstCompleted = false
+      this.secondCompleted = false
+      this.thirdCompleted = false
+      this.fourthCompleted = false
+      // 清除数据
+      this.pageForm = {
+        assignmentForm: {
+          SchoolName: '',
           ProName: '',
           ProNo: '',
           DeptName: '',
@@ -245,7 +433,7 @@ export default {
             RoadArea: null,
           },
         ],
-        appliactionForm: {
+        applicationForm: {
           SpecialName: '',
           SpecialYear: '',
           CentralCompetent: '',
@@ -255,99 +443,21 @@ export default {
           AnnualTarget: '',
           target: [],
         },
-      },
-    }
-  },
-  created() {},
-  methods: {
-    closeDialog() {
-      this.showDialog = false
-    },
-
-    // 点击填写文档
-    gotoPage(val) {
-      this.activeFj = val
-      this.showFuJian = true
-    },
-
-    // 获取page数据
-    getDataPage(e1, e2) {
-      switch (e2) {
-        case 'one':
-          this.pageForm.assignmentForm = JSON.parse(JSON.stringify(e1))
-          this.firstCompleted = true
-          break
-
-        case 'two':
-          this.pageForm.assetForm = JSON.parse(JSON.stringify(e1))
-          this.secondCompleted = true
-          break
-
-        case 'three':
-          this.pageForm.taskForm = JSON.parse(JSON.stringify(e1))
-          this.thirdCompleted = true
-          break
-
-        case 'four':
-          this.fourthCompleted = true
-          break
-
-        default:
-          break
+        // 主页数据
+        proMainData: {
+          ProName: '',
+          AppTime: '',
+          DeptName: '',
+          AppAmount: '',
+          ReviewAmount: '',
+          ProTimes: [],
+          CurrentState: '',
+          MeetingMinutes: '',
+          NickName: '',
+        },
+        // 展示上传文件列表
+        fileList: [],
       }
-      this.$message({
-        type: 'success',
-        message: '保存成功!',
-      })
-      // this.showFuJian = e3
-      console.log(e1)
-    },
-
-    // 取消输入
-    cancelPaper() {
-      this.showFuJian = false
-    },
-
-    /** 上传操作 */
-    handleImport() {
-      this.upload.title = '用户导入'
-      this.upload.open = true
-    },
-
-    // 文件上传中处理
-    handleFileUploadProgress(event, file, fileList) {
-      this.upload.isUploading = true
-    },
-    // 文件上传成功处理
-    handleFileSuccess(response, file, fileList) {
-      this.upload.open = false
-      this.upload.isUploading = false
-      this.$refs.upload.clearFiles()
-      this.$alert(response.msg, '导入结果', { dangerouslyUseHTMLString: true })
-      this.getList()
-    },
-
-    /** 下载模板操作 */
-    importTemplate() {
-      this.download('/system/user/importTemplate', '用户数据导入模板')
-    },
-
-    // 提交上传文件
-    submitFileForm() {
-      this.$refs.upload.submit()
-    },
-
-    // 提交
-    submit() {
-      this.$message.success('提交成功！')
-      this.showDialog = true
-    },
-
-    // 取消
-    cancel() {
-      // 清除数据
-      this.$refs['pageFormRef'].resetFields()
-      this.showDialog = true
     },
   },
 }

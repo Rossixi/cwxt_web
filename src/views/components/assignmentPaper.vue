@@ -17,7 +17,7 @@
           ><el-form-item label="项目编码"> <el-input v-model="assignmentForm.ProNo" disabled></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
-          ><el-form-item label="项目负责部门"> <el-input v-model="assignmentForm.DeptName"></el-input> </el-form-item
+          ><el-form-item label="责任部门"> <el-input v-model="assignmentForm.DeptName"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
@@ -30,7 +30,12 @@
           ><el-form-item label="项目负责人"> <el-input v-model="assignmentForm.HeaderName"></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
-          ><el-form-item label="项目负责人电话"> <el-input v-model="assignmentForm.HeaderTel"></el-input> </el-form-item
+          ><el-form-item label="项目负责人电话">
+            <el-input
+              v-model="assignmentForm.HeaderTel"
+              type="number"
+              oninput="if(value.length>11)value=value.slice(0,11)"
+            ></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
@@ -58,7 +63,9 @@
         <el-col :lg="24"
           ><el-form-item label="项目主要内容及相关预算说明" class="pro-content">
             <el-input type="textarea" rows="5" v-model="assignmentForm.ProContentAndStatement"></el-input>
-            <el-form-item label="申请总金额" class="all-money"> <el-input v-model="assignmentForm.AppAmount"></el-input> </el-form-item>
+            <el-form-item label="申请总金额" class="all-money">
+              <el-input v-model="assignmentForm.AppAmount" type="number"></el-input>
+            </el-form-item>
           </el-form-item>
         </el-col>
       </el-row>
@@ -136,7 +143,7 @@
     </el-form>
     <div class="btns">
       <button class="submit" @click="save">保存</button>
-      <button @click="goBack()">取消</button>
+      <button @click="goBack()">返回</button>
     </div>
   </div>
 </template>
@@ -186,6 +193,10 @@ export default {
 
   mounted() {
     this.assignmentForm = JSON.parse(JSON.stringify(this.form))
+    this.$nextTick(function () {
+      this.addEconomic()
+      this.addProPlan()
+    })
   },
 
   methods: {
@@ -249,7 +260,7 @@ export default {
       labelEconomic.style.lineHeight = 89 + 51 * this.assignmentForm.EconomicClf.length + 'px'
       const labelProPlan = this.$refs.proPlanRef.$el.querySelector('.el-form-item__label')
       labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.ProPlan.length + 'px'
-      this.$emit('paper-cancel')
+      this.$emit('paper-cancel', '1')
     },
   },
 }

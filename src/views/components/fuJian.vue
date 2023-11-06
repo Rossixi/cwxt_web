@@ -25,7 +25,7 @@
         <el-tab-pane label="附件4：绩效目标申报表" name="4" lazy>
           <application-paper
             ref="applicationRef"
-            :form="pageForm.appliactionForm"
+            :form="pageForm.applicationForm"
             @paper-data="getPaperData"
             @paper-cancel="paperCancel"
           ></application-paper>
@@ -136,12 +136,67 @@ export default {
         })
     },
 
+    // 返回确认框
+    cancelMessageBox(ref) {
+      return this.$confirm('是否在离开页面前保存修改？', '确认信息', {
+        distinguishCancelAndClose: true,
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+      })
+        .then(() => {
+          this.$refs[ref].save()
+          this.$emit('cancel-paper')
+        })
+        .catch((action) => {
+          if (action === 'cancel') {
+            this.$emit('cancel-paper')
+          } else {
+            return
+          }
+        })
+    },
+
     getPaperData(e1, e2) {
       this.$emit('data-page', e1, e2)
     },
 
-    paperCancel() {
-      this.$emit('cancel-paper')
+    paperCancel(e) {
+      switch (e) {
+        case '1':
+          if (!this.$refs.assignRef.isEdit()) {
+            this.cancelMessageBox('assignRef')
+          } else {
+            this.$emit('cancel-paper')
+          }
+          break
+
+        case '2':
+          if (!this.$refs.assetRef.isEdit()) {
+            this.cancelMessageBox('assetRef')
+          } else {
+            this.$emit('cancel-paper')
+          }
+          break
+
+        case '3':
+          if (!this.$refs.taskRef.isEdit()) {
+            this.cancelMessageBox('taskRef')
+          } else {
+            this.$emit('cancel-paper')
+          }
+          break
+
+        case '4':
+          if (!this.$refs.applicationRef.isEdit()) {
+            this.cancelMessageBox('applicationRef')
+          } else {
+            this.$emit('cancel-paper')
+          }
+          break
+
+        default:
+          break
+      }
     },
   },
 }

@@ -26,3 +26,21 @@ export function getThreeTarget(query) {
     params: query,
   })
 }
+
+// 删除上传文件
+export function deleteFile(data) {
+  return request({
+    url: '/project/file/DelFile',
+    method: 'delete',
+    data: data,
+  })
+}
+
+// 提交接口
+export function submitProject(data) {
+  return request({
+    url: '/project/application',
+    method: 'post',
+    data: data,
+  })
+}

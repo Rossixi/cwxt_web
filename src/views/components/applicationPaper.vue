@@ -34,9 +34,11 @@
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="奖金情况（万元）" class="bonus">
-            <el-form-item label="年度金额" class="bonus-child"> <el-input v-model="applicationForm.AnnualAmount"></el-input> </el-form-item>
+            <el-form-item label="年度金额" class="bonus-child">
+              <el-input v-model="applicationForm.AnnualAmount" type="number"></el-input>
+            </el-form-item>
             <el-form-item label="其中：中央补助" class="bonus-child">
-              <el-input v-model="applicationForm.CentralSubsidies"></el-input>
+              <el-input v-model="applicationForm.CentralSubsidies" type="number"></el-input>
             </el-form-item>
           </el-form-item>
         </el-col>
@@ -82,7 +84,7 @@
     </el-form>
     <div class="btns">
       <button class="submit" @click="save">保存</button>
-      <button @click="goBack()">取消</button>
+      <button @click="goBack()">返回</button>
     </div>
   </div>
 </template>
@@ -113,6 +115,7 @@ export default {
       thirdTarget: [],
       spanObj: {},
       btnsList: [],
+      threeTargetParams: {},
     }
   },
 
@@ -128,6 +131,16 @@ export default {
     // 获取字典-中央主管部门
     this.getDicts('pro_centralcompetent').then((response) => {
       this.centralCompetent = response.data
+    })
+
+    // 初始化表格
+    this.spanObj = dataMethod(this.applicationForm.target)
+    this.$nextTick(function () {
+      if (this.applicationForm.target.length > 0) {
+        this.btnsList = []
+        this.getBtnList()
+        this.editHeight()
+      }
     })
   },
 
@@ -163,14 +176,18 @@ export default {
     // 获取三级下拉框数据
     // 获取树形结构
     getThreeTarget(rowData) {
-      let params = {
-        SpecialName: this.applicationForm.SpecialName,
-        FirstName: rowData.indicatorsName1,
-        SecondName: rowData.indicatorsName2,
+      if (this.threeTargetParams.FirstName == rowData.indicatorsName1 && this.threeTargetParams.SecondName == rowData.indicatorsName2) {
+        return
+      } else {
+        this.threeTargetParams = {
+          SpecialName: this.applicationForm.SpecialName,
+          FirstName: rowData.indicatorsName1,
+          SecondName: rowData.indicatorsName2,
+        }
+        getThreeTarget(this.threeTargetParams).then((res) => {
+          this.thirdTarget = res.data
+        })
       }
-      getThreeTarget(params).then((res) => {
-        this.thirdTarget = res.data
-      })
     },
 
     // 合并表格
@@ -251,7 +268,7 @@ export default {
       // labelEconomic.style.lineHeight = 89 + 51 * this.applicationForm.EconomicClf.length + 'px'
       // const labelProPlan = this.$refs.proPlanRef.$el.querySelector('.el-form-item__label')
       // labelProPlan.style.lineHeight = 48 + 51 * this.applicationForm.ProPlan.length + 'px'
-      this.$emit('paper-cancel')
+      this.$emit('paper-cancel', '4')
     },
   },
 }

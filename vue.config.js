@@ -39,14 +39,14 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: 'http://192.168.1.19:8033/', // 后端接口地址
+        target: 'http://192.168.3.7:8033/', // 后端接口地址
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: '', //需要rewrite的
         },
       },
       msgHub: {
-        target: 'http://192.168.1.19:8033/msgHub',
+        target: 'http://192.168.3.7:8033/msgHub',
         ws: true,
         changeOrigin: true,
         pathRewrite: {
