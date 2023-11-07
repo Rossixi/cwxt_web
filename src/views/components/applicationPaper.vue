@@ -4,13 +4,13 @@
     <el-form ref="applicationFormRef" :model="applicationForm" label-position="left" label-width="250px" v-if="applicationForm">
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="年度"> <el-input v-model="applicationForm.SpecialYear"></el-input> </el-form-item
+          ><el-form-item label="年度"> <el-input v-model="applicationForm.specialYear" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="专项名称">
-            <el-select v-model="applicationForm.SpecialName" placeholder="请选择" @change="getTargetTree">
+            <el-select v-model="applicationForm.specialName" placeholder="请选择" @change="getTargetTree" :disabled="review">
               <el-option v-for="dict in specialName" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue">
               </el-option> </el-select></el-form-item
         ></el-col>
@@ -18,27 +18,27 @@
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="中央主管部门">
-            <el-select v-model="applicationForm.CentralCompetent" placeholder="请选择">
+            <el-select v-model="applicationForm.centralCompetent" placeholder="请选择" :disabled="review">
               <el-option v-for="dict in centralCompetent" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"> </el-option>
             </el-select> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="12"
-          ><el-form-item label="省级财政部门"> <el-input v-model="applicationForm.ProvincialFinance"></el-input> </el-form-item
+          ><el-form-item label="省级财政部门"> <el-input v-model="applicationForm.provincialFinance" :disabled="review"></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
-          ><el-form-item label="省级教育部门"> <el-input v-model="applicationForm.DeptName"></el-input> </el-form-item
+          ><el-form-item label="省级教育部门"> <el-input v-model="applicationForm.deptName" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="奖金情况（万元）" class="bonus">
             <el-form-item label="年度金额" class="bonus-child">
-              <el-input v-model="applicationForm.AnnualAmount" type="number"></el-input>
+              <el-input v-model="applicationForm.annualAmount" type="number" :disabled="review"></el-input>
             </el-form-item>
             <el-form-item label="其中：中央补助" class="bonus-child">
-              <el-input v-model="applicationForm.CentralSubsidies" type="number"></el-input>
+              <el-input v-model="applicationForm.centralSubsidies" type="number" :disabled="review"></el-input>
             </el-form-item>
           </el-form-item>
         </el-col>
@@ -46,7 +46,7 @@
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="年度目标" class="pro-necessity">
-            <el-input type="textarea" rows="3" v-model="applicationForm.AnnualTarget"></el-input> </el-form-item
+            <el-input type="textarea" rows="3" v-model="applicationForm.annualTarget" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
 
@@ -59,7 +59,7 @@
               <el-table-column label="三级指标">
                 <template slot-scope="scope">
                   <el-form-item :prop="applicationForm.target.indicatorsName3">
-                    <el-select v-model="scope.row.indicatorsName3" placeholder="" @focus="getThreeTarget(scope.row)">
+                    <el-select v-model="scope.row.indicatorsName3" placeholder="" @focus="getThreeTarget(scope.row)" :disabled="review">
                       <el-option v-for="item in thirdTarget" :key="item" :label="item" :value="item"> </el-option>
                     </el-select>
                   </el-form-item>
@@ -68,13 +68,13 @@
               <el-table-column label="指标值">
                 <template slot-scope="scope">
                   <el-form-item :prop="applicationForm.target.indicatorsValue">
-                    <el-input v-model="scope.row.indicatorsValue"></el-input>
+                    <el-input v-model="scope.row.indicatorsValue" :disabled="review"></el-input>
                   </el-form-item>
                 </template>
               </el-table-column>
             </el-table>
 
-            <div class="right-btns" ref="rightBtnRef">
+            <div class="right-btns" ref="rightBtnRef" v-if="!review">
               <div class="add-plan" v-for="item in btnsList" :key="item.index" @click="addTarget(item)">
                 <i class="el-icon-circle-plus-outline"></i>
               </div>
@@ -83,7 +83,7 @@
       </el-row>
     </el-form>
     <div class="btns">
-      <button class="submit" @click="save">保存</button>
+      <button class="submit" @click="save" v-if="!review">保存</button>
       <button @click="goBack()">返回</button>
     </div>
   </div>
@@ -105,6 +105,11 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+
+    review: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -180,7 +185,7 @@ export default {
         return
       } else {
         this.threeTargetParams = {
-          SpecialName: this.applicationForm.SpecialName,
+          SpecialName: this.applicationForm.specialName,
           FirstName: rowData.indicatorsName1,
           SecondName: rowData.indicatorsName2,
         }
@@ -223,21 +228,22 @@ export default {
     // 修改label和按钮位置
     editHeight() {
       const labelEconomic = this.$refs.targetRef.$el.querySelector('.el-form-item__label')
-      const rightBtns = this.$refs.rightBtnRef
-
       labelEconomic.style.lineHeight = 48 + 51 * this.applicationForm.target.length + 'px'
-      rightBtns.style.height = 50 + 51 * this.applicationForm.target.length + 'px'
+      if (!this.review) {
+        const rightBtns = this.$refs.rightBtnRef
+        rightBtns.style.height = 50 + 51 * this.applicationForm.target.length + 'px'
 
-      // 添加按钮
-      setTimeout(() => {
-        for (let i = 0; i < rightBtns.children.length; i++) {
-          for (let j = 0; j < this.btnsList.length; j++) {
-            if (i == j) {
-              rightBtns.children[i].style.top = 50 + 51 * this.btnsList[j].btnIndex + 'px'
+        // 添加按钮
+        setTimeout(() => {
+          for (let i = 0; i < rightBtns.children.length; i++) {
+            for (let j = 0; j < this.btnsList.length; j++) {
+              if (i == j) {
+                rightBtns.children[i].style.top = 50 + 51 * this.btnsList[j].btnIndex + 'px'
+              }
             }
           }
-        }
-      }, 100)
+        }, 100)
+      }
     },
 
     // 增加三级目标

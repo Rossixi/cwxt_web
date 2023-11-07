@@ -1,275 +1,413 @@
 <template>
   <div class="app-container review-detail">
-    <el-row :gutter="20">
-      <el-col :lg="24" :sm="24">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span style="font-size: 18px; font-weight: 700">项目信息</span>
-          </div>
-          <div class="flex-box">
-            <div class="personal-infor">
-              <div class="infor-item">
-                <h4>项目名称</h4>
-                <p>rossi</p>
+    <div class="fujian" v-if="showitem">
+      <review-fujian :pageForm="projectDetails" :activeNum="itemNum" @back-review="backReview" @edit-project="editProject"></review-fujian>
+    </div>
+    <div class="content" v-else>
+      <el-row :gutter="20">
+        <el-col :lg="24" :sm="24">
+          <el-card class="box-card">
+            <div slot="header" class="clearfix">
+              <span style="font-size: 18px; font-weight: 700">项目信息</span>
+            </div>
+            <div class="flex-box">
+              <div class="personal-infor" v-if="projectDetails.proMainData">
+                <div class="infor-item">
+                  <h4>项目名称</h4>
+                  <p>{{ projectDetails.proMainData.proName }}</p>
+                </div>
+                <div class="infor-item">
+                  <h4>申报时间</h4>
+                  <p>{{ projectDetails.proMainData.appTime }}</p>
+                </div>
+                <div class="infor-item">
+                  <h4>申报部门</h4>
+                  <p>{{ projectDetails.proMainData.deptName }}</p>
+                </div>
+                <div class="infor-item">
+                  <h4>申请人</h4>
+                  <p>{{ projectDetails.proMainData.nickName }}</p>
+                </div>
+                <div class="infor-item">
+                  <h4>申报金额</h4>
+                  <p>{{ projectDetails.proMainData.appAmount }} 万元</p>
+                </div>
+                <div class="infor-item">
+                  <h4>党委会审议金额</h4>
+                  <p>{{ projectDetails.proMainData.reviewAmount }}</p>
+                </div>
+                <div class="infor-item">
+                  <h4>项目起止时间</h4>
+                  <p>{{ projectDetails.proMainData.proTimes[0] }} 至 {{ projectDetails.proMainData.proTimes[1] }}</p>
+                </div>
               </div>
-              <div class="infor-item">
-                <h4>申报时间</h4>
-                <p>222</p>
-              </div>
-              <div class="infor-item">
-                <h4>申报部门</h4>
-                <p>4444</p>
-              </div>
-              <div class="infor-item">
-                <h4>申报金额</h4>
-                <p>555</p>
-              </div>
-              <div class="infor-item">
-                <h4>党委会审议金额</h4>
-                <p>666</p>
-              </div>
-              <div class="infor-item">
-                <h4>项目起止时间</h4>
-                <p>777</p>
-              </div>
-              <div class="infor-item">
-                <h4>类别</h4>
-                <p>777</p>
-              </div>
-              <div class="infor-item">
-                <h4>支付进度</h4>
-                <p>777</p>
+              <div class="review-result">绩效考核结果</div>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="20" type="flex">
+        <el-col :lg="18" :sm="24">
+          <el-card class="second-box" v-if="projectDetails.proMainData">
+            <div slot="header" class="clearfix">
+              <span style="font-size: 18px; font-weight: 700">附件文档</span>
+            </div>
+
+            <h4 class="small-title">项目申报文件</h4>
+
+            <div class="jujian-list">
+              <el-row :gutter="20">
+                <el-col :lg="8" :sm="12">
+                  <div class="jujian-item">
+                    <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                    <div>
+                      <h5>附件1： 项目任务书</h5>
+                      <el-button size="small" type="text" @click="handleReview(1)">预览</el-button>
+                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                    </div>
+                  </div>
+                </el-col>
+                <el-col :lg="8" :sm="12">
+                  <div class="jujian-item">
+                    <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                    <div>
+                      <h5>附件2： 新增资产配置限额表</h5>
+                      <el-button size="small" type="text" @click="handleReview(2)">预览</el-button>
+                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                    </div>
+                  </div>
+                </el-col>
+                <el-col :lg="8" :sm="12">
+                  <div class="jujian-item">
+                    <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                    <div>
+                      <h5>附件3： 任务书汇总表</h5>
+                      <el-button size="small" type="text" @click="handleReview(3)">预览</el-button>
+                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                    </div>
+                  </div>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :lg="8" :sm="12">
+                  <div class="jujian-item">
+                    <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                    <div>
+                      <h5>附件4： 绩效目标申请表</h5>
+                      <el-button size="small" type="text" @click="handleReview(4)">预览</el-button>
+                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                    </div>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+
+            <h4 class="small-title">其它附件</h4>
+
+            <div class="jujian-list">
+              <el-row :gutter="20">
+                <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
+                  <div class="jujian-item">
+                    <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                    <div>
+                      <h5>{{ item.fileName }}</h5>
+                      <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
+                    </div>
+                  </div>
+                </el-col>
+              </el-row>
+            </div>
+
+            <!-- <div v-if="projectDetails.proMainData.currentState > 2"> -->
+            <div>
+              <h4 class="small-title">财务处专家评审</h4>
+
+              <div class="jujian-list">
+                <el-row :gutter="20">
+                  <el-col :lg="8" :sm="12" v-for="(item, index) in uploadFile" :key="index">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                      <div class="filename">
+                        <h5>{{ item.fileName }}</h5>
+                        <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
+                      </div>
+                      <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(index)"></svg-icon>
+                    </div>
+                  </el-col>
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item upload" v-if="projectDetails.proMainData.currentState == 2">
+                      <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
+                      <div>
+                        <h5>请上传财务处专家审查意见汇总</h5>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
               </div>
             </div>
-            <div class="review-result">绩效考核结果</div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
 
-    <el-row :gutter="20">
-      <el-col :lg="18" :sm="24">
-        <el-card class="second-box">
-          <div slot="header" class="clearfix">
-            <span style="font-size: 18px; font-weight: 700">附件文档</span>
-          </div>
+            <h4 class="small-title">上会审批意见</h4>
 
-          <h4 class="small-title">项目申报文件</h4>
+            <div class="meeting">
+              <el-form ref="form" :model="meeting" label-width="150px">
+                <el-form-item label="审批金额" prop="money">
+                  <el-input v-model="meeting.reviewAmount" placeholder="请输入审批金额" type="number" />
+                </el-form-item>
 
-          <div class="jujian-list">
-            <el-row :gutter="20">
-              <el-col :lg="8" :sm="12">
-                <div class="jujian-item">
-                  <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
-                  <div>
-                    <h5>附件1： 项目任务书</h5>
-                    <el-button size="small" type="text" @click="handleReview(scope.row.gid)">预览</el-button>
-                    <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button>
+                <el-form-item label="会议纪要文字说明" prop="remark">
+                  <el-input v-model="meeting.meetingMinutes" type="textarea" rows="5" placeholder="请输入会议纪要文字说明"></el-input>
+                </el-form-item>
+              </el-form>
+              <el-button type="primary" class="meeting-btn">提 交</el-button>
+            </div>
+
+            <div class="jujian-list">
+              <el-row :gutter="20">
+                <el-col :lg="8" :sm="12" v-for="(item, index) in uploadFile" :key="index">
+                  <div class="jujian-item">
+                    <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                    <div class="filename">
+                      <h5>{{ item.fileName }}</h5>
+                      <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
+                    </div>
+                    <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(index)"></svg-icon>
                   </div>
-                </div>
-              </el-col>
-              <el-col :lg="8" :sm="12">
-                <div class="jujian-item">
-                  <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
-                  <div>
-                    <h5>附件2： 新增资产配置限额表</h5>
-                    <el-button size="small" type="text" @click="handleReview(scope.row.gid)">预览</el-button>
-                    <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button>
+                </el-col>
+                <el-col :lg="8" :sm="12">
+                  <div class="jujian-item upload">
+                    <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
+                    <div>
+                      <h5>请上传扫描版会议纪要</h5>
+                    </div>
                   </div>
-                </div>
-              </el-col>
-              <el-col :lg="8" :sm="12">
-                <div class="jujian-item">
-                  <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
-                  <div>
-                    <h5>附件3： 任务书汇总表</h5>
-                    <el-button size="small" type="text" @click="handleReview(scope.row.gid)">预览</el-button>
-                    <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button>
-                  </div>
-                </div>
-              </el-col>
-            </el-row>
-            <el-row :gutter="20">
-              <el-col :lg="8" :sm="12">
-                <div class="jujian-item">
-                  <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
-                  <div>
-                    <h5>附件4： 绩效目标申请表</h5>
-                    <el-button size="small" type="text" @click="handleReview(scope.row.gid)">预览</el-button>
-                    <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button>
-                  </div>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
+                </el-col>
+              </el-row>
+            </div>
 
-          <h4 class="small-title">财务处专家评审</h4>
+            <h4 class="small-title">绩效自评</h4>
 
-          <div class="jujian-list">
-            <el-row :gutter="20">
-              <el-col :lg="8" :sm="12">
-                <div class="jujian-item">
-                  <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
-                  <div>
-                    <h5>财务处专家审查意见汇总</h5>
-                    <el-button size="small" type="text" @click="handleReview(scope.row.gid)">预览</el-button>
-                    <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button>
+            <div class="jujian-list">
+              <el-row :gutter="20">
+                <el-col :lg="8" :sm="12">
+                  <div class="jujian-item muban download">
+                    <p>请下载相关附件模板</p>
+                    <el-button
+                      icon="el-icon-download"
+                      size="mini"
+                      @click="downloadFile({ downUrl: '/project/selfassessment/list/report', fileName: '绩效自评报告' })"
+                      >附件：绩效自评报告</el-button
+                    >
+                    <el-button
+                      icon="el-icon-download"
+                      size="mini"
+                      @click="downloadFile({ downUrl: '/project/selfassessment/list/form', fileName: '绩效自评表' })"
+                      >附件：绩效自评表</el-button
+                    >
                   </div>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-
-          <h4 class="small-title">上会审批意见</h4>
-
-          <div class="jujian-list">
-            <el-row :gutter="20">
-              <el-col :lg="8" :sm="12">
-                <div class="jujian-item">
-                  <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
-                  <div>
-                    <h5>党委会会议纪要</h5>
-                    <el-button size="small" type="text" @click="handleReview(scope.row.gid)">预览</el-button>
-                    <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button>
+                </el-col>
+              </el-row>
+              <el-row :gutter="20">
+                <el-col :lg="8" :sm="12" v-for="(item, index) in uploadFile" :key="index">
+                  <div class="jujian-item">
+                    <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                    <div class="filename">
+                      <h5>{{ item.fileName }}</h5>
+                      <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
+                    </div>
+                    <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(index)"></svg-icon>
                   </div>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-
-          <h4 class="small-title">绩效自评</h4>
-
-          <div class="jujian-list">
-            <el-row :gutter="20">
-              <el-col :lg="8" :sm="12">
-                <div class="jujian-item">
-                  <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
-                  <div>
-                    <h5>绩效自评报告</h5>
-                    <el-button size="small" type="text" @click="handleReview(scope.row.gid)">预览</el-button>
-                    <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button>
+                </el-col>
+                <el-col :lg="8" :sm="12">
+                  <div class="jujian-item upload">
+                    <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
+                    <div>
+                      <h5>请上传绩效自评文件</h5>
+                    </div>
                   </div>
-                </div>
-              </el-col>
-              <el-col :lg="8" :sm="12">
-                <div class="jujian-item">
-                  <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                </el-col>
+              </el-row>
+            </div>
+
+            <div class="btns">
+              <button class="submit" @click="approve">通过</button>
+              <button @click="dismissal">驳回</button>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :sm="24" :lg="6">
+          <el-card class="jindu" v-if="projectDetails.proMainData">
+            <div slot="header" class="clearfix">
+              <span style="font-size: 18px; font-weight: 700">审批进度</span>
+            </div>
+            <el-steps direction="vertical" :active="parseInt(projectDetails.proMainData.currentState)">
+              <el-step title="项目申请">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 申请时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="系部审核">
+                <template slot="description">
                   <div>
-                    <h5>绩效自评表</h5>
-                    <el-button size="small" type="text" @click="handleReview(scope.row.gid)">预览</el-button>
-                    <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button>
+                    <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                    <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                    <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
                   </div>
-                </div>
-              </el-col>
-            </el-row>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :sm="24" :lg="6">
-        <el-card class="second-box jindu">
-          <div slot="header" class="clearfix">
-            <span style="font-size: 18px; font-weight: 700">审批进度</span>
-          </div>
-          <el-steps direction="vertical" :active="1">
-            <el-step title="项目申请">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="time"></svg-icon> 申请时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="系部审核">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="资产处审核">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="财务处审核">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="分管院长审核">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="上会审批意见">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="项目申请（复审）">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="系部审核（复审）">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="资产处审核（复审）">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="财务处审核（复审）">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-            <el-step title="绩效自评">
-              <template slot="description">
-                <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-              </template>
-            </el-step>
-          </el-steps>
-        </el-card>
-      </el-col>
-    </el-row>
+                </template>
+              </el-step>
+              <el-step title="资产处审核">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="财务处审核">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="分管院长审核">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p>
+                    <svg-icon icon-class="documentation"></svg-icon> 审批意见：同意jdfk;lsajf慷慨大方疯狂的聚划算发活动时间客服恢复好的就开始和。
+                  </p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="上会审批意见">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="项目申请（复审）">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="系部审核（复审）">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="资产处审核（复审）">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="财务处审核（复审）">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+              <el-step title="绩效自评">
+                <template slot="description">
+                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
+                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
+                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                </template>
+              </el-step>
+            </el-steps>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+
+    <!-- 通过/驳回弹框 -->
+    <el-dialog :title="dialogTitle" :visible.sync="openDialog" width="500px" append-to-body>
+      <el-input
+        v-model="approval.approvalOpinions"
+        type="textarea"
+        rows="5"
+        placeholder="请输入审核意见"
+        maxlength="100"
+        show-word-limit
+      ></el-input>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="closeDialog">取 消</el-button>
+        <el-button type="primary" @click="submitApproval">确定{{ dialogTitle.substring(0, 2) }}</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 上传弹窗 -->
+    <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
+      <el-upload
+        name="file"
+        ref="upload"
+        accept="*"
+        :headers="upload.headers"
+        :action="upload.url + '?target=' + upload.updateSupport"
+        :disabled="upload.isUploading"
+        :on-progress="handleFileUploadProgress"
+        :on-success="handleFileSuccess"
+        drag
+      >
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+        <div class="el-upload__tip text-center" slot="tip">
+          <div class="el-upload__tip" slot="tip">单次可上传一个文件</div>
+          <span>如需上传多个文件请分批上传</span>
+        </div>
+      </el-upload>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getProDetail } from '@/api/project/onlineview'
+import { getToken } from '@/utils/auth'
+import { downReviewFile } from '@/utils/request'
+import { getProDetail, approvalSubmit } from '@/api/project/onlineview'
+import reviewFujian from '../components/reviewFujian.vue'
 export default {
-  name: 'onlineReview',
+  name: 'reviewDetails',
+  components: { reviewFujian },
   data() {
     return {
-      // 查询参数
-      selectData: {
-        proName: '',
-        PageNum: 1,
-        PageSize: 10,
+      projectDetails: {},
+      showitem: false,
+      itemNum: null,
+      dialogTitle: '通过审核意见',
+      openDialog: false,
+      comments: '',
+      approval: {
+        approvalAction: '',
+        approvalOpinions: '',
       },
-      total: 0,
-      projectList: [],
-      // 类型数据字典
-      statusOptions: [],
+      // 用户导入参数
+      upload: {
+        // 是否显示弹出层（用户导入）
+        open: false,
+        // 弹出层标题（用户导入）
+        title: '',
+        // 是否禁用上传
+        isUploading: false,
+        // 是否更新已经存在的用户数据
+        updateSupport: 'application',
+        // 设置上传的请求头部
+        headers: { Authorization: 'Bearer ' + getToken() },
+        // 上传的地址
+        url: process.env.VUE_APP_BASE_API + '/project/file/UploadFile',
+      },
+      uploadFile: [],
+      // 上会审批
+      meeting: {
+        reviewAmount: null,
+        meetingMinutes: '',
+      },
     }
   },
   created() {
@@ -281,7 +419,126 @@ export default {
     getProjectDetails(id) {
       getProDetail(id).then((res) => {
         console.log(res)
+        this.projectDetails = res.data
+        if (this.projectDetails.proMainData.currentState < 0) {
+          this.projectDetails.projectDetails.currentState = 0
+        }
       })
+    },
+
+    // 展示附件
+    handleReview(index) {
+      this.itemNum = index
+      this.showitem = true
+    },
+
+    // 财务处修改文件
+    editProject(e1, e2) {
+      switch (e2) {
+        case 'one':
+          this.projectDetails.assignmentForm = JSON.parse(JSON.stringify(e1))
+          this.projectDetails.proMainData.proName = this.projectDetails.assignmentForm.proName
+          this.projectDetails.proMainData.proTimes.push(this.projectDetails.assignmentForm.proPlan[0].startTime)
+          this.projectDetails.proMainData.proTimes.push(
+            this.projectDetails.assignmentForm.proPlan[this.projectDetails.assignmentForm.proPlan.length - 1].endTime,
+          )
+
+          this.projectDetails.proMainData.deptName = this.projectDetails.assignmentForm.deptName
+          this.projectDetails.proMainData.appAmount = this.projectDetails.assignmentForm.appAmount
+          // 审议金额待定
+          // this.proMainData.ReviewAmount = this.projectDetails.assignmentForm.AppAmount
+          break
+
+        case 'two':
+          this.projectDetails.assetForm = JSON.parse(JSON.stringify(e1))
+          break
+
+        case 'three':
+          this.projectDetails.taskForm = JSON.parse(JSON.stringify(e1))
+          break
+
+        case 'four':
+          this.projectDetails.applicationForm = JSON.parse(JSON.stringify(e1))
+          break
+
+        default:
+          break
+      }
+      this.$message({
+        type: 'success',
+        message: '保存成功!',
+      })
+      this.showitem = false
+    },
+
+    // 返回审核页
+    backReview() {
+      this.showitem = false
+    },
+
+    // 审核通过
+    approve() {
+      this.approval.approvalAction = '通过'
+      this.dialogTitle = '通过审核意见'
+      this.openDialog = true
+    },
+
+    // 审核驳回
+    dismissal() {
+      this.approval.approvalAction = '驳回'
+      this.dialogTitle = '驳回审核意见'
+      this.openDialog = true
+    },
+
+    // 提交通过/驳回
+    submitApproval() {
+      console.log(this.approval)
+      // approvalSubmit().then(res => {
+      //   console.log(res);
+      // })
+    },
+
+    // 关闭弹窗
+    closeDialog() {
+      this.approval = {
+        approvalAction: '',
+        approvalOpinions: '',
+      }
+      this.openDialog = false
+    },
+
+    // 下载
+    downloadFile(file) {
+      downReviewFile(file.downUrl, file.fileName)
+    },
+
+    // 点击上传
+    handleImport() {
+      this.upload.title = '上传文件'
+      this.upload.open = true
+    },
+
+    // 文件上传中处理
+    handleFileUploadProgress(event, file, fileList) {
+      this.upload.isUploading = true
+    },
+    // 文件上传成功处理
+    handleFileSuccess(response, file, fileList) {
+      this.upload.open = false
+      this.upload.isUploading = false
+      this.$refs.upload.clearFiles()
+      // this.$alert(response.msg, '导入结果', { dangerouslyUseHTMLString: true })
+      if (response.code == 200) {
+        this.uploadFile.push(response.data[0])
+        this.$message.success('上传成功')
+      } else {
+        this.$message.error('上传失败')
+      }
+    },
+
+    // 删除文件
+    deleteFile(index) {
+      this.uploadFile.splice(index, 1)
     },
   },
 }
@@ -321,8 +578,13 @@ export default {
     }
   }
 
+  .content {
+    height: 100%;
+  }
+
   .second-box {
     margin-top: 20px;
+    height: calc(100% - 20px);
 
     .small-title {
       position: relative;
@@ -343,7 +605,9 @@ export default {
     .jujian-list {
       .jujian-item {
         display: flex;
+        flex-wrap: wrap;
         height: 80px;
+        width: 100%;
         background: #f0f7ff;
         border-radius: 3px;
         margin-bottom: 20px;
@@ -353,21 +617,109 @@ export default {
           margin: 20px;
         }
 
+        .filename {
+          width: 75%;
+        }
+
         h5 {
+          width: 80%;
           margin-top: 19px;
           margin-bottom: 0;
           font-size: 15px;
+          width: 100%;
+        }
+
+        .delete-icon {
+          font-size: 24px;
+          cursor: pointer;
+          display: block;
+          width: 34px;
+          margin-top: 50px;
+          // color: #f0f7ff;
+        }
+
+        .delete-icon:hover {
+          color: #46a6ff;
         }
 
         button {
           margin-right: 20px;
         }
       }
+
+      .muban {
+        background: #ecedf0;
+        color: #898b8e;
+        font-size: 14px;
+        padding: 0 20px;
+        width: 100%;
+
+        p {
+          width: 100%;
+          margin-bottom: 0;
+        }
+      }
+      ::v-deep {
+        .upload {
+          .el-button {
+            height: 36px;
+            margin: 22px;
+          }
+
+          h5 {
+            line-height: 45px;
+            font-size: 15px;
+            color: #b4b5b7;
+          }
+        }
+
+        .download {
+          .el-button {
+            height: 36px;
+            margin-right: 0;
+          }
+        }
+      }
+    }
+
+    .meeting {
+      background: #f0f7ff;
+      padding: 20px 50% 10px 0;
+      margin-bottom: 20px;
+      position: relative;
+
+      .meeting-btn {
+        position: absolute;
+        bottom: 28px;
+        right: 40%;
+      }
+    }
+
+    .btns {
+      width: 200px;
+      margin: 100px auto 20px;
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        width: 88px;
+        height: 32px;
+        border: 0;
+        border-radius: 3px;
+        cursor: pointer;
+        padding: 0;
+        letter-spacing: 3px;
+      }
+
+      .submit {
+        background: #0052d9;
+        color: #fff;
+      }
     }
   }
 
   .jindu {
-    height: 100%;
+    margin-top: 20px;
 
     ::v-deep {
       .el-step__description {

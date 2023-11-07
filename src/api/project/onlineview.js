@@ -16,3 +16,12 @@ export function getProDetail(gid) {
     method: 'get',
   })
 }
+
+// 提交审核意见
+export function approvalSubmit(data) {
+  return request({
+    url: '/project/approval',
+    method: 'post',
+    data: data,
+  })
+}

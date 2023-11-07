@@ -76,12 +76,12 @@
         <el-form ref="pageFormRef" :model="pageForm" label-width="110px">
           <el-row :gutter="50">
             <el-col :lg="8"
-              ><el-form-item label="项目名称"> <el-input v-model="pageForm.proMainData.ProName" disabled></el-input> </el-form-item
+              ><el-form-item label="项目名称"> <el-input v-model="pageForm.proMainData.proName" disabled></el-input> </el-form-item
             ></el-col>
             <el-col :lg="8"
               ><el-form-item label="项目起始时间"
                 ><el-date-picker
-                  v-model="pageForm.proMainData.ProTimes"
+                  v-model="pageForm.proMainData.proTimes"
                   type="daterange"
                   value-format="yyyy-MM-dd"
                   format="yyyy-MM-dd"
@@ -97,7 +97,7 @@
             <el-col :lg="8"
               ><el-form-item label="申报时间">
                 <el-date-picker
-                  v-model="pageForm.proMainData.AppTime"
+                  v-model="pageForm.proMainData.appTime"
                   type="date"
                   value-format="yyyy-MM-dd"
                   format="yyyy-MM-dd"
@@ -107,15 +107,15 @@
                 </el-date-picker> </el-form-item
             ></el-col>
             <el-col :lg="8"
-              ><el-form-item label="申报部门"> <el-input v-model="pageForm.proMainData.DeptName" disabled></el-input> </el-form-item
+              ><el-form-item label="申报部门"> <el-input v-model="pageForm.proMainData.deptName" disabled></el-input> </el-form-item
             ></el-col>
           </el-row>
           <el-row :gutter="50">
             <el-col :lg="8"
-              ><el-form-item label="申报金额"> <el-input v-model="pageForm.proMainData.AppAmount" disabled></el-input> </el-form-item
+              ><el-form-item label="申报金额"> <el-input v-model="pageForm.proMainData.appAmount" disabled></el-input> </el-form-item
             ></el-col>
             <el-col :lg="8"
-              ><el-form-item label="党委会审议金额"> <el-input v-model="pageForm.proMainData.ReviewAmount" disabled></el-input> </el-form-item
+              ><el-form-item label="党委会审议金额"> <el-input v-model="pageForm.proMainData.reviewAmount" disabled></el-input> </el-form-item
             ></el-col>
           </el-row>
         </el-form>
@@ -171,7 +171,7 @@ export default {
       secondCompleted: false,
       thirdCompleted: false,
       fourthCompleted: false,
-      // 用户导入参数
+      // 上传参数
       upload: {
         // 是否显示弹出层（用户导入）
         open: false,
@@ -188,74 +188,66 @@ export default {
       },
       pageForm: {
         assignmentForm: {
-          SchoolName: '',
-          ProName: '',
-          ProNo: '',
-          DeptName: '',
-          Address: '',
-          HeaderName: '',
-          HeaderTel: null,
-          ProAttr: '',
-          ProNecessity: '',
-          ProFeasibility: '',
-          ProContentAndStatement: '',
-          AppAmount: null,
-          EconomicClf: [{ economic: '', money: null }],
-          ProPlan: [{ startTime: '', endTime: '', content: '' }],
-          ExpectedRevenue: '',
-          SchoolOpinion: '',
+          schoolName: '',
+          proName: '',
+          proNo: '',
+          deptName: '',
+          address: '',
+          headerName: '',
+          headerTel: null,
+          proAttr: '',
+          proNecessity: '',
+          proFeasibility: '',
+          proContentAndStatement: '',
+          appAmount: null,
+          economicClf: [{ economic: '', money: null }],
+          proPlan: [{ startTime: '', endTime: '', content: '' }],
+          expectedRevenue: '',
+          schoolOpinion: '',
         },
         assetForm: [
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { assetName: '', isSoftWare: '', assetType: '', addNum: null, unitPrice: null, totalPrice: null, remark: '', isAttachment: '' },
         ],
         taskForm: [
           {
-            ProContent: '',
-            ProCategory: '',
-            ProNature: '',
-            BudgetAmount: null,
-            AddSchoolBuildArea: null,
-            RenovationSchoolBuildArea: null,
-            Equipment: null,
-            Teachers: null,
-            Books: null,
-            AddSportsFieldArea: null,
-            Trainees: null,
-            SdqngwMeters: null,
-            InformationSystem: null,
-            RoadArea: null,
+            proContent: '',
+            proCategory: '',
+            proNature: '',
+            budgetAmount: null,
+            addSchoolBuildArea: null,
+            renovationSchoolBuildArea: null,
+            equipment: null,
+            teachers: null,
+            books: null,
+            addSportsFieldArea: null,
+            trainees: null,
+            sdqngwMeters: null,
+            informationSystem: null,
+            roadArea: null,
           },
         ],
         applicationForm: {
-          SpecialName: '',
-          SpecialYear: '',
-          CentralCompetent: '',
-          ProvincialFinance: '',
-          AnnualAmount: null,
-          CentralSubsidies: null,
-          AnnualTarget: '',
+          specialName: '',
+          specialYear: '',
+          centralCompetent: '',
+          provincialFinance: '',
+          annualAmount: null,
+          centralSubsidies: null,
+          annualTarget: '',
           target: [],
         },
         // 主页数据
         proMainData: {
-          ProName: '',
-          AppTime: '',
-          DeptName: '',
-          AppAmount: '',
-          ReviewAmount: '',
-          ProTimes: [],
-          CurrentState: '',
-          MeetingMinutes: '',
-          NickName: '',
+          gid: '',
+          proName: '',
+          appTime: '',
+          deptName: '',
+          appAmount: '',
+          reviewAmount: '',
+          proTimes: [],
+          currentState: '',
+          meetingMinutes: '',
+          nickName: '',
         },
         // 展示上传文件列表
         fileList: [],
@@ -280,13 +272,13 @@ export default {
         case 'one':
           this.pageForm.assignmentForm = JSON.parse(JSON.stringify(e1))
           this.firstCompleted = true
-          this.pageForm.proMainData.ProName = this.pageForm.assignmentForm.ProName
-          this.pageForm.proMainData.AppTime = new Date()
-          this.pageForm.proMainData.ProTimes.push(this.pageForm.assignmentForm.ProPlan[0].startTime)
-          this.pageForm.proMainData.ProTimes.push(this.pageForm.assignmentForm.ProPlan[this.pageForm.assignmentForm.ProPlan.length - 1].endTime)
+          this.pageForm.proMainData.proName = this.pageForm.assignmentForm.proName
+          this.pageForm.proMainData.appTime = new Date()
+          this.pageForm.proMainData.proTimes.push(this.pageForm.assignmentForm.proPlan[0].startTime)
+          this.pageForm.proMainData.proTimes.push(this.pageForm.assignmentForm.proPlan[this.pageForm.assignmentForm.proPlan.length - 1].endTime)
 
-          this.pageForm.proMainData.DeptName = this.pageForm.assignmentForm.DeptName
-          this.pageForm.proMainData.AppAmount = this.pageForm.assignmentForm.AppAmount
+          this.pageForm.proMainData.deptName = this.pageForm.assignmentForm.deptName
+          this.pageForm.proMainData.appAmount = this.pageForm.assignmentForm.appAmount
           // 审议金额待定
           // this.proMainData.ReviewAmount = this.pageForm.assignmentForm.AppAmount
           break
@@ -314,7 +306,6 @@ export default {
         message: '保存成功!',
       })
       // this.showFuJian = e3
-      console.log(e1)
     },
 
     // 取消输入
@@ -361,7 +352,6 @@ export default {
     submit() {
       if (this.firstCompleted && this.secondCompleted && this.thirdCompleted && this.fourthCompleted) {
         submitProject(this.pageForm).then((res) => {
-          console.log(res)
           this.$message.success('提交成功！')
           this.resetting()
           this.showDialog = true
@@ -386,74 +376,66 @@ export default {
       // 清除数据
       this.pageForm = {
         assignmentForm: {
-          SchoolName: '',
-          ProName: '',
-          ProNo: '',
-          DeptName: '',
-          Address: '',
-          HeaderName: '',
-          HeaderTel: '',
-          ProAttr: null,
-          ProNecessity: '',
-          ProFeasibility: '',
-          ProContentAndStatement: '',
-          AppAmount: null,
-          EconomicClf: [{ economic: '', money: null }],
-          ProPlan: [{ startTime: '', endTime: '', content: '' }],
-          ExpectedRevenue: '',
-          SchoolOpinion: '',
+          schoolName: '',
+          proName: '',
+          proNo: '',
+          deptName: '',
+          address: '',
+          headerName: '',
+          headerTel: '',
+          proAttr: null,
+          proNecessity: '',
+          proFeasibility: '',
+          proContentAndStatement: '',
+          appAmount: null,
+          economicClf: [{ economic: '', money: null }],
+          proPlan: [{ startTime: '', endTime: '', content: '' }],
+          expectedRevenue: '',
+          schoolOpinion: '',
         },
         assetForm: [
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
-          { AssetName: '', IsSoftWare: '', AssetType: '', AddNum: null, UnitPrice: null, TotalPrice: null, Remark: '', IsAttachment: '' },
+          { assetName: '', isSoftWare: '', assetType: '', addNum: null, unitPrice: null, totalPrice: null, remark: '', isAttachment: '' },
         ],
         taskForm: [
           {
-            ProContent: '',
-            ProCategory: '',
-            ProNature: '',
-            BudgetAmount: null,
-            AddSchoolBuildArea: null,
-            RenovationSchoolBuildArea: null,
-            Equipment: null,
-            Teachers: null,
-            Books: null,
-            AddSportsFieldArea: null,
-            Trainees: null,
-            SdqngwMeters: null,
-            InformationSystem: null,
-            RoadArea: null,
+            proContent: '',
+            proCategory: '',
+            proNature: '',
+            budgetAmount: null,
+            addSchoolBuildArea: null,
+            renovationSchoolBuildArea: null,
+            equipment: null,
+            teachers: null,
+            books: null,
+            addSportsFieldArea: null,
+            trainees: null,
+            sdqngwMeters: null,
+            informationSystem: null,
+            roadArea: null,
           },
         ],
         applicationForm: {
-          SpecialName: '',
-          SpecialYear: '',
-          CentralCompetent: '',
-          ProvincialFinance: '',
-          AnnualAmount: null,
-          CentralSubsidies: null,
-          AnnualTarget: '',
+          specialName: '',
+          specialYear: '',
+          centralCompetent: '',
+          provincialFinance: '',
+          annualAmount: null,
+          centralSubsidies: null,
+          annualTarget: '',
           target: [],
         },
         // 主页数据
         proMainData: {
-          ProName: '',
-          AppTime: '',
-          DeptName: '',
-          AppAmount: '',
-          ReviewAmount: '',
-          ProTimes: [],
-          CurrentState: '',
-          MeetingMinutes: '',
-          NickName: '',
+          gid: '',
+          proName: '',
+          appTime: '',
+          deptName: '',
+          appAmount: '',
+          reviewAmount: '',
+          proTimes: [],
+          currentState: '',
+          meetingMinutes: '',
+          nickName: '',
         },
         // 展示上传文件列表
         fileList: [],

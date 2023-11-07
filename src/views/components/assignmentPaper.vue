@@ -4,44 +4,45 @@
     <el-form ref="assignmentFormRef" :model="assignmentForm" label-position="left" label-width="250px" v-if="assignmentForm">
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="学校名称"> <el-input v-model="assignmentForm.SchoolName"></el-input> </el-form-item
+          ><el-form-item label="学校名称"> <el-input v-model="assignmentForm.schoolName" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="项目名称"> <el-input v-model="assignmentForm.ProName"></el-input> </el-form-item
+          ><el-form-item label="项目名称"> <el-input v-model="assignmentForm.proName" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="12"
-          ><el-form-item label="项目编码"> <el-input v-model="assignmentForm.ProNo" disabled></el-input> </el-form-item
+          ><el-form-item label="项目编码"> <el-input v-model="assignmentForm.proNo" :disabled="review"></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
-          ><el-form-item label="责任部门"> <el-input v-model="assignmentForm.DeptName"></el-input> </el-form-item
+          ><el-form-item label="责任部门"> <el-input v-model="assignmentForm.deptName" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="实施地址"> <el-input v-model="assignmentForm.Address"></el-input> </el-form-item
+          ><el-form-item label="实施地址"> <el-input v-model="assignmentForm.address" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="12"
-          ><el-form-item label="项目负责人"> <el-input v-model="assignmentForm.HeaderName"></el-input> </el-form-item
+          ><el-form-item label="项目负责人"> <el-input v-model="assignmentForm.headerName" :disabled="review"></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
           ><el-form-item label="项目负责人电话">
             <el-input
-              v-model="assignmentForm.HeaderTel"
+              v-model="assignmentForm.headerTel"
               type="number"
               oninput="if(value.length>11)value=value.slice(0,11)"
+              :disabled="review"
             ></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24">
           <el-form-item label="项目属性" prop="resource" class="pro-attr">
-            <el-radio-group v-model="assignmentForm.ProAttr">
+            <el-radio-group v-model="assignmentForm.proAttr" :disabled="review">
               <el-radio label="延续项目"></el-radio>
               <el-radio label="新增项目"></el-radio>
             </el-radio-group> </el-form-item
@@ -50,21 +51,21 @@
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="项目必要性分析" class="pro-necessity">
-            <el-input type="textarea" rows="3" v-model="assignmentForm.ProNecessity"></el-input> </el-form-item
+            <el-input type="textarea" rows="3" v-model="assignmentForm.proNecessity" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="项目可行性分析" class="pro-necessity">
-            <el-input type="textarea" rows="3" v-model="assignmentForm.ProFeasibility"></el-input> </el-form-item
+            <el-input type="textarea" rows="3" v-model="assignmentForm.proFeasibility" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="项目主要内容及相关预算说明" class="pro-content">
-            <el-input type="textarea" rows="5" v-model="assignmentForm.ProContentAndStatement"></el-input>
-            <el-form-item label="申请总金额" class="all-money">
-              <el-input v-model="assignmentForm.AppAmount" type="number"></el-input>
+            <el-input type="textarea" rows="5" v-model="assignmentForm.proContentAndStatement" :disabled="review"></el-input>
+            <el-form-item label="申请总金额（万元）" class="all-money">
+              <el-input v-model="assignmentForm.appAmount" type="number" :disabled="review"></el-input>
             </el-form-item>
           </el-form-item>
         </el-col>
@@ -72,11 +73,11 @@
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="项目预算经济分类" class="pro-economic" ref="economicRef">
-            <el-table :data="assignmentForm.EconomicClf" border show-summary :summary-method="getSummaries" style="width: 100%">
+            <el-table :data="assignmentForm.economicClf" border show-summary :summary-method="getSummaries" style="width: 100%">
               <el-table-column label="经济分类">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.EconomicClf.economic">
-                    <el-select v-model="scope.row.economic" placeholder="请选择">
+                  <el-form-item :prop="assignmentForm.economicClf.economic">
+                    <el-select v-model="scope.row.economic" placeholder="请选择" :disabled="review">
                       <el-option v-for="item in economicList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                   </el-form-item>
@@ -84,65 +85,79 @@
               </el-table-column>
               <el-table-column label="金额（万元）">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.EconomicClf.money">
-                    <el-input v-model="scope.row.money" type="number"></el-input>
+                  <el-form-item :prop="assignmentForm.economicClf.money">
+                    <el-input v-model="scope.row.money" type="number" :disabled="review"></el-input>
                   </el-form-item>
                 </template>
               </el-table-column>
             </el-table>
-            <div class="add-economic" @click="addEconomic"><i class="el-icon-circle-plus-outline"></i></div>
+            <div class="add-economic" @click="addEconomic" v-if="!review"><i class="el-icon-circle-plus-outline"></i></div>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="项目进度计划安排" class="pro-plan" ref="proPlanRef">
-            <el-table :data="assignmentForm.ProPlan" border style="width: 100%">
+            <el-table :data="assignmentForm.proPlan" border style="width: 100%">
               <el-table-column label="开始时间">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.ProPlan.startTime">
-                    <el-date-picker v-model="scope.row.startTime" type="date" value-format="yyyy-MM-dd" format="yyyy-MM-dd" placeholder="选择日期">
+                  <el-form-item :prop="assignmentForm.proPlan.startTime">
+                    <el-date-picker
+                      v-model="scope.row.startTime"
+                      type="date"
+                      value-format="yyyy-MM-dd"
+                      format="yyyy-MM-dd"
+                      placeholder="选择日期"
+                      :disabled="review"
+                    >
                     </el-date-picker>
                   </el-form-item>
                 </template>
               </el-table-column>
               <el-table-column label="结束时间">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.ProPlan.endTime">
-                    <el-date-picker v-model="scope.row.endTime" type="date" value-format="yyyy-MM-dd" format="yyyy-MM-dd" placeholder="选择日期">
+                  <el-form-item :prop="assignmentForm.proPlan.endTime">
+                    <el-date-picker
+                      v-model="scope.row.endTime"
+                      type="date"
+                      value-format="yyyy-MM-dd"
+                      format="yyyy-MM-dd"
+                      placeholder="选择日期"
+                      :disabled="review"
+                    >
                     </el-date-picker>
                   </el-form-item>
                 </template>
               </el-table-column>
               <el-table-column label="完成的内容">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.ProPlan.content">
-                    <el-input v-model="scope.row.content"></el-input>
+                  <el-form-item :prop="assignmentForm.proPlan.content">
+                    <el-input v-model="scope.row.content" :disabled="review"></el-input>
                   </el-form-item>
                 </template>
               </el-table-column>
             </el-table>
-            <div class="add-plan" @click="addProPlan"><i class="el-icon-circle-plus-outline"></i></div>
+            <div class="add-plan" @click="addProPlan" v-if="!review"><i class="el-icon-circle-plus-outline"></i></div>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="预期效益" class="pro-necessity">
-            <el-input type="textarea" rows="3" v-model="assignmentForm.ExpectedRevenue"></el-input> </el-form-item
+            <el-input type="textarea" rows="3" v-model="assignmentForm.expectedRevenue" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="学校意见及承诺" class="school-option">
-            <el-input type="textarea" rows="3" v-model="assignmentForm.SchoolOpinion" disabled></el-input>
+            <el-input type="textarea" rows="3" v-model="assignmentForm.schoolOpinion" disabled></el-input>
             <p class="school-date">年月日</p>
           </el-form-item></el-col
         >
       </el-row>
     </el-form>
     <div class="btns">
-      <button class="submit" @click="save">保存</button>
+      <button class="submit" @click="save" v-if="!review">保存</button>
       <button @click="goBack()">返回</button>
     </div>
   </div>
@@ -161,6 +176,11 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+
+    review: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -193,9 +213,12 @@ export default {
 
   mounted() {
     this.assignmentForm = JSON.parse(JSON.stringify(this.form))
+    console.log(this.assignmentForm)
     this.$nextTick(function () {
-      this.addEconomic()
-      this.addProPlan()
+      const labelEconomic = this.$refs.economicRef.$el.querySelector('.el-form-item__label')
+      labelEconomic.style.lineHeight = 88 + 51 * this.assignmentForm.economicClf.length + 'px'
+      const labelProPlan = this.$refs.proPlanRef.$el.querySelector('.el-form-item__label')
+      labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.proPlan.length + 'px'
     })
   },
 
@@ -230,15 +253,15 @@ export default {
     },
 
     addEconomic() {
-      this.assignmentForm.EconomicClf.push({ economic: '', money: null })
+      this.assignmentForm.economicClf.push({ economic: '', money: null })
       const labelEconomic = this.$refs.economicRef.$el.querySelector('.el-form-item__label')
-      labelEconomic.style.lineHeight = 88 + 51 * this.assignmentForm.EconomicClf.length + 'px'
+      labelEconomic.style.lineHeight = 88 + 51 * this.assignmentForm.economicClf.length + 'px'
     },
 
     addProPlan() {
-      this.assignmentForm.ProPlan.push({ startTime: '', endTime: '', content: '' })
+      this.assignmentForm.proPlan.push({ startTime: '', endTime: '', content: '' })
       const labelProPlan = this.$refs.proPlanRef.$el.querySelector('.el-form-item__label')
-      labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.ProPlan.length + 'px'
+      labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.proPlan.length + 'px'
     },
 
     save() {
@@ -257,9 +280,9 @@ export default {
 
     goBack() {
       const labelEconomic = this.$refs.economicRef.$el.querySelector('.el-form-item__label')
-      labelEconomic.style.lineHeight = 89 + 51 * this.assignmentForm.EconomicClf.length + 'px'
+      labelEconomic.style.lineHeight = 89 + 51 * this.assignmentForm.economicClf.length + 'px'
       const labelProPlan = this.$refs.proPlanRef.$el.querySelector('.el-form-item__label')
-      labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.ProPlan.length + 'px'
+      labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.proPlan.length + 'px'
       this.$emit('paper-cancel', '1')
     },
   },

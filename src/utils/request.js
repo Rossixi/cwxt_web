@@ -185,4 +185,40 @@ export async function downFile(url, params, config) {
     })
 }
 
+// 通用下载方法
+export async function downReviewFile(url, filename) {
+  downloadLoadingInstance = Loading.service({ text: '正在下载数据，请稍候', spinner: 'el-icon-loading', background: 'rgba(0, 0, 0, 0.7)' })
+  return service
+    .get(url, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      responseType: 'blob',
+    })
+    .then(async (resp) => {
+      const { data } = resp
+
+      const isLogin = await blobValidate(data)
+      if (isLogin) {
+        var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+        var contentDisposition = decodeURI(resp.headers['content-disposition'])
+        var result = patt.exec(contentDisposition)
+        var fileName = result[1]
+        fileName = filename
+
+        const blob = new Blob([data])
+        saveAs(blob, fileName)
+      } else {
+        const resText = await data.text()
+        const rspObj = JSON.parse(resText)
+        const errMsg = errorCode[rspObj.code] || rspObj.msg || errorCode['default']
+        Message.error(errMsg)
+      }
+      downloadLoadingInstance.close()
+    })
+    .catch((r) => {
+      console.error(r)
+      Message.error('下载文件出现错误，请联系管理员！')
+      downloadLoadingInstance.close()
+    })
+}
+
 export default service

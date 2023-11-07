@@ -62,6 +62,8 @@ export default {
         proName: '',
         PageNum: 1,
         PageSize: 10,
+        Sort: 'AppTime',
+        SortType: 'descending',
       },
       total: 0,
       projectList: [],

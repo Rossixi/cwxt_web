@@ -12,86 +12,86 @@
     </div>
     <el-table :data="taskForm" border show-summary :summary-method="getSummaries" style="width: 100%" v-if="taskForm">
       <!-- <el-table-column type="index" label="序号" width="45"> </el-table-column> -->
-      <el-table-column label="项目名称" prop="ProName" width="145"> </el-table-column>
-      <el-table-column label="项目编号" prop="ProNo" width="93"> </el-table-column>
+      <el-table-column label="项目名称" prop="proName" width="145"> </el-table-column>
+      <el-table-column label="项目编号" prop="proNo" width="93"> </el-table-column>
       <el-table-column label="项目内容概述" width="300">
         <template slot-scope="scope">
-          <el-input type="textarea" v-model="scope.row.ProContent" maxlength="100" show-word-limit rows="3"></el-input>
+          <el-input type="textarea" v-model="scope.row.proContent" maxlength="100" show-word-limit rows="3" :disabled="review"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="项目类别" width="127">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.ProCategory" placeholder="">
+          <el-select v-model="scope.row.proCategory" placeholder="" :disabled="review">
             <el-option v-for="dict in proCateGory" :key="dict.dictValue" :value="dict.dictValue" :label="dict.dictLabel"> </el-option>
           </el-select>
         </template>
       </el-table-column>
       <el-table-column label="项目性质" width="127">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.ProNature" placeholder="">
+          <el-select v-model="scope.row.proNature" placeholder="" :disabled="review">
             <el-option v-for="dict in proNature" :key="dict.dictValue" :value="dict.dictValue" :label="dict.dictLabel"> </el-option>
           </el-select>
         </template>
       </el-table-column>
       <el-table-column label="预算金额（万元）" width="150">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.BudgetAmount" type="number"></el-input>
+          <el-input v-model="scope.row.budgetAmount" type="number" :disabled="review"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="预期效益">
         <el-table-column label="新建改扩建校舍（平方米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.AddSchoolBuildArea" type="number"></el-input>
+            <el-input v-model="scope.row.addSchoolBuildArea" type="number" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="维修装修校舍面积（平方米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.RenovationSchoolBuildArea"></el-input>
+            <el-input v-model="scope.row.renovationSchoolBuildArea" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="购置仪器设备（台套数）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.Equipment"></el-input>
+            <el-input v-model="scope.row.equipment" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="双师型教师增加值（人数）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.Teachers"></el-input>
+            <el-input v-model="scope.row.teachers" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="新增图书册数（万册）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.Books"></el-input>
+            <el-input v-model="scope.row.books" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="新建或维修运动场面积（平方米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.AddSportsFieldArea"></el-input>
+            <el-input v-model="scope.row.addSportsFieldArea" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="新增实习实训工位数（个）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.Trainees"></el-input>
+            <el-input v-model="scope.row.trainees" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="水电气暖管网工程量（延米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.SdqngwMeters"></el-input>
+            <el-input v-model="scope.row.sdqngwMeters" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="建设应用信息化系统个数" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.InformationSystem"></el-input>
+            <el-input v-model="scope.row.informationSystem" :disabled="review"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="道路建设面积（平方米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.RoadArea"></el-input>
+            <el-input v-model="scope.row.roadArea" :disabled="review"></el-input>
           </template>
         </el-table-column>
       </el-table-column>
 
-      <el-table-column label="预计完成时间" prop="ProEndTime" width="127" fixed="right"> </el-table-column>
+      <el-table-column label="预计完成时间" prop="proEndTime" width="127" fixed="right"> </el-table-column>
     </el-table>
     <div class="second-line">
       <p>联系人：</p>
@@ -106,7 +106,7 @@
       </ul>
     </div>
     <div class="btns">
-      <button class="submit" @click="save">保存</button>
+      <button class="submit" @click="save" v-if="!review">保存</button>
       <button @click="goBack()">返回</button>
     </div>
   </div>
@@ -130,6 +130,11 @@ export default {
       type: Object,
       required: true,
     },
+
+    review: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -141,9 +146,9 @@ export default {
 
   mounted() {
     this.taskForm = JSON.parse(JSON.stringify(this.form))
-    this.taskForm[0].ProName = JSON.parse(JSON.stringify(this.assignForm.ProName))
-    this.taskForm[0].ProNo = JSON.parse(JSON.stringify(this.assignForm.ProNo))
-    this.taskForm[0].ProEndTime = JSON.parse(JSON.stringify(this.assignForm.ProPlan[this.assignForm.ProPlan.length - 1].endTime))
+    this.taskForm[0].proName = JSON.parse(JSON.stringify(this.assignForm.proName))
+    this.taskForm[0].proNo = JSON.parse(JSON.stringify(this.assignForm.proNo))
+    this.taskForm[0].proEndTime = JSON.parse(JSON.stringify(this.assignForm.proPlan[this.assignForm.proPlan.length - 1].endTime))
 
     // 获取字典-项目性质
     this.getDicts('pro_nature').then((response) => {

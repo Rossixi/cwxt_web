@@ -16,12 +16,12 @@
       <el-table-column type="index" label="序号" min-width="5%"> </el-table-column>
       <el-table-column label="资产名称" min-width="16%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.AssetName"></el-input>
+          <el-input v-model="scope.row.assetName" :disabled="review"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="是否软件" min-width="8%">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.IsSoftWare" placeholder="">
+          <el-select v-model="scope.row.isSoftWare" placeholder="" :disabled="review">
             <el-option value="是"> </el-option>
             <el-option value="否"> </el-option>
           </el-select>
@@ -29,32 +29,32 @@
       </el-table-column>
       <el-table-column label="规格型号" min-width="15%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.AssetType"></el-input>
+          <el-input v-model="scope.row.assetType" :disabled="review"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="新增数量" min-width="7%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.AddNum" type="number"></el-input>
+          <el-input v-model="scope.row.addNum" type="number" :disabled="review"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="单价（万元）" min-width="12%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.UnitPrice" type="number"></el-input>
+          <el-input v-model="scope.row.unitPrice" type="number" :disabled="review"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="新增总金额（万元）" min-width="12%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.TotalPrice" type="number"></el-input>
+          <el-input v-model="scope.row.totalPrice" type="number" :disabled="review"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" min-width="18%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.Remark"></el-input>
+          <el-input v-model="scope.row.remark" :disabled="review"></el-input>
         </template>
       </el-table-column>
       <el-table-column label="附件（有/无）" min-width="8%">
         <template slot-scope="scope">
-          <el-select v-model="scope.row.IsAttachment" placeholder="">
+          <el-select v-model="scope.row.isAttachment" placeholder="" :disabled="review">
             <el-option value="有"> </el-option>
             <el-option value="无"> </el-option>
           </el-select>
@@ -62,7 +62,7 @@
       </el-table-column>
     </el-table>
     <div class="btns">
-      <button class="submit" @click="save">保存</button>
+      <button class="submit" @click="save" v-if="!review">保存</button>
       <button @click="goBack()">返回</button>
     </div>
   </div>
@@ -82,6 +82,11 @@ export default {
       type: Array,
       required: true,
     },
+
+    review: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -91,7 +96,20 @@ export default {
 
   mounted() {
     this.assetForm = JSON.parse(JSON.stringify(this.form))
-    console.log(this.assetForm)
+    if (this.assetForm.length < 10 && !this.review) {
+      for (let i = this.assetForm.length - 1; i < 9; i++) {
+        this.assetForm.push({
+          assetName: '',
+          isSoftWare: '',
+          assetType: '',
+          addNum: null,
+          unitPrice: null,
+          totalPrice: null,
+          remark: '',
+          isAttachment: '',
+        })
+      }
+    }
   },
 
   methods: {
@@ -105,7 +123,7 @@ export default {
         }
         if (index === 6) {
           const values = data.map((item) => {
-            return parseFloat(item.TotalPrice)
+            return parseFloat(item.totalPrice)
           })
           if (!values.every((value) => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
