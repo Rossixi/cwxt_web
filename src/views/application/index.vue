@@ -112,10 +112,11 @@
           </el-row>
           <el-row :gutter="50">
             <el-col :lg="8"
-              ><el-form-item label="申报金额"> <el-input v-model="pageForm.proMainData.appAmount" disabled></el-input> </el-form-item
+              ><el-form-item label="申报金额（万元）"> <el-input v-model="pageForm.proMainData.appAmount" disabled></el-input> </el-form-item
             ></el-col>
             <el-col :lg="8"
-              ><el-form-item label="党委会审议金额"> <el-input v-model="pageForm.proMainData.reviewAmount" disabled></el-input> </el-form-item
+              ><el-form-item label="党委会审议金额（万元）">
+                <el-input v-model="pageForm.proMainData.reviewAmount" disabled></el-input> </el-form-item
             ></el-col>
           </el-row>
         </el-form>

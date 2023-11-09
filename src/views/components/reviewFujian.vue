@@ -11,7 +11,13 @@
         ></assignment-paper>
       </div>
       <div v-if="activeNum == 2">
-        <asset-paper ref="assetRef" :form="pageForm.assetForm" :review="pageForm.isReview" @paper-cancel="paperCancel"></asset-paper>
+        <asset-paper
+          ref="assetRef"
+          :form="pageForm.assetForm"
+          :review="pageForm.isReview"
+          @paper-data="getPaperData"
+          @paper-cancel="paperCancel"
+        ></asset-paper>
       </div>
       <div v-if="activeNum == 3">
         <task-paper
@@ -19,6 +25,7 @@
           :form="pageForm.taskForm"
           :assignForm="pageForm.assignmentForm"
           :review="pageForm.isReview"
+          @paper-data="getPaperData"
           @paper-cancel="paperCancel"
         ></task-paper>
       </div>
@@ -27,6 +34,7 @@
           ref="applicationRef"
           :form="pageForm.applicationForm"
           :review="pageForm.isReview"
+          @paper-data="getPaperData"
           @paper-cancel="paperCancel"
         ></application-paper>
       </div>

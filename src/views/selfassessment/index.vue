@@ -19,12 +19,12 @@
       </el-form>
 
       <el-table :data="projectList" stripe>
-        <el-table-column label="项目申报名称" prop="proName" width="500">
+        <el-table-column label="项目名称" prop="proName" width="500">
           <template slot-scope="scope">
             <p class="pro-name" @click="handleReview(scope.row.gid)">{{ scope.row.proName }}</p>
           </template>
         </el-table-column>
-        <el-table-column label="审核状态" align="center" prop="currentState">
+        <el-table-column label="状态" align="center" prop="currentState">
           <template slot-scope="scope">
             <dict-tag :options="statusOptions" :value="scope.row.currentState" />
           </template>
@@ -34,8 +34,7 @@
         <el-table-column label="项目金额（万元）" align="center" prop="appAmount" :show-overflow-tooltip="true" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
-            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleReview(scope.row.gid)">查看</el-button>
-            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row.gid)">删除</el-button>
+            <el-button size="mini" type="text" icon="el-icon-edit" @click="handleReview(scope.row.gid)">自评</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -52,9 +51,9 @@
 </template>
 
 <script>
-import { getProList } from '@/api/project/onlineview'
+import { getSelfAssessment } from '@/api/project/selfassessment'
 export default {
-  name: 'onlineReview',
+  name: 'selfassessment',
   data() {
     return {
       // 查询参数
@@ -82,7 +81,7 @@ export default {
   methods: {
     // 获取项目列表
     getProjectList() {
-      getProList(this.selectData).then((res) => {
+      getSelfAssessment(this.selectData).then((res) => {
         console.log(res)
         this.projectList = res.data.result
         this.total = res.data.totalNum
@@ -101,7 +100,7 @@ export default {
 
     // 查看申报项目
     handleReview(id) {
-      console.log(id)
+      this.$router.push({ path: '/selfdetails', query: { gid: id } })
     },
 
     // 状态字典翻译

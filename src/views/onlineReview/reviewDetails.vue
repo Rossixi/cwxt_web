@@ -34,7 +34,7 @@
                 </div>
                 <div class="infor-item">
                   <h4>党委会审议金额</h4>
-                  <p>{{ projectDetails.proMainData.reviewAmount }}</p>
+                  <p>{{ projectDetails.proMainData.reviewAmount }} 万元</p>
                 </div>
                 <div class="infor-item">
                   <h4>项目起止时间</h4>
@@ -108,10 +108,10 @@
             <div class="jujian-list">
               <el-row :gutter="20">
                 <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
-                  <div class="jujian-item">
+                  <div class="jujian-item" v-if="item.type == 'application'">
                     <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
-                    <div>
-                      <h5>{{ item.fileName }}</h5>
+                    <div class="filename">
+                      <h5 :title="item.fileName">{{ item.fileName }}</h5>
                       <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
                     </div>
                   </div>
@@ -119,24 +119,31 @@
               </el-row>
             </div>
 
-            <!-- <div v-if="projectDetails.proMainData.currentState > 2"> -->
-            <div>
+            <div v-if="projectDetails.proMainData.currentState > 2">
               <h4 class="small-title">财务处专家评审</h4>
+
+              <div class="meeting" v-if="projectDetails.proMainData.currentState > 8">
+                <el-form ref="form" :model="proInfo" label-width="150px">
+                  <el-form-item label="项目编码" prop="money">
+                    <el-input v-model="proInfo.proNo" placeholder="请输入项目编码" :disabled="projectDetails.proMainData.currentState != 9" />
+                  </el-form-item>
+                </el-form>
+              </div>
 
               <div class="jujian-list">
                 <el-row :gutter="20">
-                  <el-col :lg="8" :sm="12" v-for="(item, index) in uploadFile" :key="index">
-                    <div class="jujian-item">
+                  <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
+                    <div class="jujian-item" v-if="item.type == 'expert'">
                       <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
                       <div class="filename">
-                        <h5>{{ item.fileName }}</h5>
+                        <h5 :title="item.fileName">{{ item.fileName }}</h5>
                         <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
                       </div>
-                      <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(index)"></svg-icon>
+                      <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(item.filePath)"></svg-icon>
                     </div>
                   </el-col>
                   <el-col :lg="8" :sm="12">
-                    <div class="jujian-item upload" v-if="projectDetails.proMainData.currentState == 2">
+                    <div class="jujian-item upload" v-if="projectDetails.proMainData.currentState == 3">
                       <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
                       <div>
                         <h5>请上传财务处专家审查意见汇总</h5>
@@ -147,89 +154,106 @@
               </div>
             </div>
 
-            <h4 class="small-title">上会审批意见</h4>
+            <div v-if="projectDetails.proMainData.currentState > 4">
+              <h4 class="small-title">上会审批意见</h4>
 
-            <div class="meeting">
-              <el-form ref="form" :model="meeting" label-width="150px">
-                <el-form-item label="审批金额" prop="money">
-                  <el-input v-model="meeting.reviewAmount" placeholder="请输入审批金额" type="number" />
-                </el-form-item>
+              <div class="meeting">
+                <el-form ref="form" :model="proInfo" label-width="150px">
+                  <el-form-item label="审批金额（万元）" prop="money">
+                    <el-input
+                      v-model="proInfo.reviewAmount"
+                      placeholder="请输入审批金额"
+                      type="number"
+                      :disabled="projectDetails.proMainData.currentState != 5"
+                    />
+                  </el-form-item>
 
-                <el-form-item label="会议纪要文字说明" prop="remark">
-                  <el-input v-model="meeting.meetingMinutes" type="textarea" rows="5" placeholder="请输入会议纪要文字说明"></el-input>
-                </el-form-item>
-              </el-form>
-              <el-button type="primary" class="meeting-btn">提 交</el-button>
+                  <el-form-item label="会议纪要文字说明" prop="remark">
+                    <el-input
+                      v-model="proInfo.meetingMinutes"
+                      type="textarea"
+                      rows="5"
+                      placeholder="请输入会议纪要文字说明"
+                      :disabled="projectDetails.proMainData.currentState != 5"
+                    ></el-input>
+                  </el-form-item>
+                </el-form>
+              </div>
+
+              <div class="jujian-list">
+                <el-row :gutter="20">
+                  <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
+                    <div class="jujian-item" v-if="item.type == 'meeting'">
+                      <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                      <div class="filename">
+                        <h5 :title="item.fileName">{{ item.fileName }}</h5>
+                        <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
+                      </div>
+                      <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(item.filePath)"></svg-icon>
+                    </div>
+                  </el-col>
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item upload" v-if="projectDetails.proMainData.currentState == 5">
+                      <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
+                      <div>
+                        <h5>请上传扫描版会议纪要</h5>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
             </div>
 
-            <div class="jujian-list">
-              <el-row :gutter="20">
-                <el-col :lg="8" :sm="12" v-for="(item, index) in uploadFile" :key="index">
-                  <div class="jujian-item">
-                    <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
-                    <div class="filename">
-                      <h5>{{ item.fileName }}</h5>
-                      <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
+            <div v-if="projectDetails.proMainData.currentState > 9">
+              <h4 class="small-title">绩效自评</h4>
+
+              <div class="jujian-list">
+                <!-- <el-row :gutter="20">
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item muban download">
+                      <p>请下载相关附件模板</p>
+                      <el-button
+                        icon="el-icon-download"
+                        size="mini"
+                        @click="downloadSelfFile({ downUrl: '/project/file/GetTemplate/report', fileName: '绩效自评报告' })"
+                        >附件：绩效自评报告</el-button
+                      >
+                      <el-button
+                        icon="el-icon-download"
+                        size="mini"
+                        @click="downloadSelfFile({ downUrl: '/project/file/GetTemplate/form', fileName: '绩效自评表' })"
+                        >附件：绩效自评表</el-button
+                      >
                     </div>
-                    <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(index)"></svg-icon>
-                  </div>
-                </el-col>
-                <el-col :lg="8" :sm="12">
-                  <div class="jujian-item upload">
-                    <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
-                    <div>
-                      <h5>请上传扫描版会议纪要</h5>
+                  </el-col>
+                </el-row> -->
+                <el-row :gutter="20">
+                  <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
+                    <div class="jujian-item" v-if="item.type == 'self'">
+                      <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                      <div class="filename">
+                        <h5 :title="item.fileName">{{ item.fileName }}</h5>
+                        <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
+                      </div>
+                      <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(item.filePath)"></svg-icon>
                     </div>
-                  </div>
-                </el-col>
-              </el-row>
+                  </el-col>
+                  <!-- <el-col :lg="8" :sm="12">
+                    <div class="jujian-item upload" v-if="projectDetails.proMainData.currentState == 10">
+                      <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
+                      <div>
+                        <h5>请上传绩效自评文件</h5>
+                      </div>
+                    </div>
+                  </el-col> -->
+                </el-row>
+              </div>
             </div>
 
-            <h4 class="small-title">绩效自评</h4>
-
-            <div class="jujian-list">
-              <el-row :gutter="20">
-                <el-col :lg="8" :sm="12">
-                  <div class="jujian-item muban download">
-                    <p>请下载相关附件模板</p>
-                    <el-button
-                      icon="el-icon-download"
-                      size="mini"
-                      @click="downloadFile({ downUrl: '/project/selfassessment/list/report', fileName: '绩效自评报告' })"
-                      >附件：绩效自评报告</el-button
-                    >
-                    <el-button
-                      icon="el-icon-download"
-                      size="mini"
-                      @click="downloadFile({ downUrl: '/project/selfassessment/list/form', fileName: '绩效自评表' })"
-                      >附件：绩效自评表</el-button
-                    >
-                  </div>
-                </el-col>
-              </el-row>
-              <el-row :gutter="20">
-                <el-col :lg="8" :sm="12" v-for="(item, index) in uploadFile" :key="index">
-                  <div class="jujian-item">
-                    <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
-                    <div class="filename">
-                      <h5>{{ item.fileName }}</h5>
-                      <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
-                    </div>
-                    <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(index)"></svg-icon>
-                  </div>
-                </el-col>
-                <el-col :lg="8" :sm="12">
-                  <div class="jujian-item upload">
-                    <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
-                    <div>
-                      <h5>请上传绩效自评文件</h5>
-                    </div>
-                  </div>
-                </el-col>
-              </el-row>
+            <div class="btns" v-if="projectDetails.proMainData.currentState == 5">
+              <button class="submit" @click="submitApproval">通过</button>
             </div>
-
-            <div class="btns">
+            <div class="btns" v-else>
               <button class="submit" @click="approve">通过</button>
               <button @click="dismissal">驳回</button>
             </div>
@@ -241,84 +265,21 @@
               <span style="font-size: 18px; font-weight: 700">审批进度</span>
             </div>
             <el-steps direction="vertical" :active="parseInt(projectDetails.proMainData.currentState)">
-              <el-step title="项目申请">
+              <el-step :title="item.examineName" v-for="(item, index) in scheduleList" :key="index">
                 <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 申请人：罗西</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 申请时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="系部审核">
-                <template slot="description">
-                  <div>
-                    <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                    <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                    <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                  <div v-if="index == 0 || index == 6">
+                    <p><svg-icon icon-class="user"></svg-icon> 申请人：{{ item.approvalName }}</p>
+                    <p><svg-icon icon-class="time"></svg-icon> 申请时间：{{ item.time }}</p>
                   </div>
-                </template>
-              </el-step>
-              <el-step title="资产处审核">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="财务处审核">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="分管院长审核">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p>
-                    <svg-icon icon-class="documentation"></svg-icon> 审批意见：同意jdfk;lsajf慷慨大方疯狂的聚划算发活动时间客服恢复好的就开始和。
-                  </p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="上会审批意见">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="项目申请（复审）">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="系部审核（复审）">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="资产处审核（复审）">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="财务处审核（复审）">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
-                </template>
-              </el-step>
-              <el-step title="绩效自评">
-                <template slot="description">
-                  <p><svg-icon icon-class="user"></svg-icon> 审批人：罗西</p>
-                  <p><svg-icon icon-class="documentation"></svg-icon> 审批意见：同意。</p>
-                  <p><svg-icon icon-class="time"></svg-icon> 审核时间：2023-11-06</p>
+                  <div v-else-if="index == 10">
+                    <p><svg-icon icon-class="documentation"></svg-icon> 绩效考核结果：{{ item.approvalcontent }}</p>
+                    <p><svg-icon icon-class="time"></svg-icon> 完成时间：{{ item.time }}</p>
+                  </div>
+                  <div v-else>
+                    <p><svg-icon icon-class="user"></svg-icon> 审批人：{{ item.approvalName }}</p>
+                    <p><svg-icon icon-class="documentation"></svg-icon> 审批意见： {{ item.approvalcontent }}</p>
+                    <p><svg-icon icon-class="time"></svg-icon> 审核时间：{{ item.time }}</p>
+                  </div>
                 </template>
               </el-step>
             </el-steps>
@@ -370,7 +331,7 @@
 <script>
 import { getToken } from '@/utils/auth'
 import { downReviewFile } from '@/utils/request'
-import { getProDetail, approvalSubmit } from '@/api/project/onlineview'
+import { getProDetail, approvalSubmit, editProject } from '@/api/project/onlineview'
 import reviewFujian from '../components/reviewFujian.vue'
 export default {
   name: 'reviewDetails',
@@ -403,11 +364,26 @@ export default {
         url: process.env.VUE_APP_BASE_API + '/project/file/UploadFile',
       },
       uploadFile: [],
-      // 上会审批
-      meeting: {
+      proInfo: {
+        gid: '',
         reviewAmount: null,
         meetingMinutes: '',
+        proNo: '',
       },
+      // 审批进度
+      scheduleList: [
+        { examineName: '项目申请', approvalName: '', time: '' },
+        { examineName: '系部审核', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '资产处审核', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '财务处审核', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '分管院长审核', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '上会审批意见', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '项目申请（复审）', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '系部审核（复审）', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '资产处审核（复审）', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '财务处审核（复审）', approvalName: '', approvalcontent: '', time: '' },
+        { examineName: '绩效自评', approvalName: '', approvalcontent: '', time: '' },
+      ],
     }
   },
   created() {
@@ -420,8 +396,38 @@ export default {
       getProDetail(id).then((res) => {
         console.log(res)
         this.projectDetails = res.data
+        this.proInfo.gid = res.data.proMainData.gid
+        this.proInfo.meetingMinutes = res.data.proMainData.meetingMinutes
+        this.proInfo.reviewAmount = res.data.proMainData.reviewAmount
+        this.proInfo.proNo = res.data.assignmentForm.proNo
         if (this.projectDetails.proMainData.currentState < 0) {
           this.projectDetails.projectDetails.currentState = 0
+        }
+
+        // 审批进度
+        for (let i = 0; i < res.data.approval.length; i++) {
+          this.scheduleList[i].approvalName = res.data.approval[i].nickName
+          this.scheduleList[i].time = res.data.approval[i].approvaledTime
+
+          this.scheduleList[i].approvalcontent = res.data.approval[i].approvalOpinions
+        }
+
+        // 修改上传type
+        switch (res.data.proMainData.currentState) {
+          case '3':
+            this.upload.updateSupport = 'expert'
+            break
+
+          case '5':
+            this.upload.updateSupport = 'meeting'
+            break
+
+          case '10':
+            this.upload.updateSupport = 'self'
+            break
+
+          default:
+            break
         }
       })
     },
@@ -464,12 +470,17 @@ export default {
         default:
           break
       }
+      editProject(this.projectDetails).then((res) => {
+        console.log(res)
+      })
       this.$message({
         type: 'success',
         message: '保存成功!',
       })
       this.showitem = false
     },
+
+    // 修改接口
 
     // 返回审核页
     backReview() {
@@ -492,10 +503,13 @@ export default {
 
     // 提交通过/驳回
     submitApproval() {
-      console.log(this.approval)
-      // approvalSubmit().then(res => {
-      //   console.log(res);
-      // })
+      approvalSubmit({ proInfo: this.proInfo, approval: this.approval, filelist: this.uploadFile }).then((res) => {
+        if (res.code == 200) {
+          this.$message.success(res.msg)
+          this.openDialog = false
+          this.$router.push({ path: '/onlineReview' })
+        }
+      })
     },
 
     // 关闭弹窗
@@ -510,6 +524,10 @@ export default {
     // 下载
     downloadFile(file) {
       downReviewFile(file.downUrl, file.fileName)
+    },
+
+    downloadSelfFile(file) {
+      window.open(process.env.VUE_APP_BASE_API + file.downUrl, '_blank')
     },
 
     // 点击上传
@@ -530,6 +548,7 @@ export default {
       // this.$alert(response.msg, '导入结果', { dangerouslyUseHTMLString: true })
       if (response.code == 200) {
         this.uploadFile.push(response.data[0])
+        this.projectDetails.fileList.push(response.data[0])
         this.$message.success('上传成功')
       } else {
         this.$message.error('上传失败')
@@ -537,8 +556,9 @@ export default {
     },
 
     // 删除文件
-    deleteFile(index) {
-      this.uploadFile.splice(index, 1)
+    deleteFile(path) {
+      this.uploadFile = this.uploadFile.filter((item) => item.filePath != path)
+      this.projectDetails.fileList = this.projectDetails.fileList.filter((item) => item.filePath != path)
     },
   },
 }
@@ -618,7 +638,7 @@ export default {
         }
 
         .filename {
-          width: 75%;
+          width: 68%;
         }
 
         h5 {
@@ -627,6 +647,12 @@ export default {
           margin-bottom: 0;
           font-size: 15px;
           width: 100%;
+          word-break: break-all;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2; /* 这里是超出几行省略 */
+          overflow: hidden;
         }
 
         .delete-icon {
@@ -725,7 +751,7 @@ export default {
       .el-step__description {
         p {
           font-size: 14px;
-          line-height: 14px;
+          line-height: 16px;
         }
       }
 

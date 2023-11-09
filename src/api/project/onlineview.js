@@ -25,3 +25,12 @@ export function approvalSubmit(data) {
     data: data,
   })
 }
+
+// 修改项目信息
+export function editProject(data) {
+  return request({
+    url: '/project/Edit',
+    method: 'put',
+    data: data,
+  })
+}

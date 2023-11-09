@@ -45,7 +45,6 @@
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button size="mini" type="text" icon="el-icon-edit" @click="handleReview(scope.row.gid)">查看</el-button>
-            <el-button size="mini" type="text" icon="el-icon-delete" @click="handleDelete(scope.row.gid)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>

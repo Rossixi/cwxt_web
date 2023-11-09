@@ -14,7 +14,7 @@
       </el-row>
       <el-row>
         <el-col :lg="12"
-          ><el-form-item label="项目编码"> <el-input v-model="assignmentForm.proNo" :disabled="review"></el-input> </el-form-item
+          ><el-form-item label="项目编码"> <el-input v-model="assignmentForm.proNo" disabled></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
           ><el-form-item label="责任部门"> <el-input v-model="assignmentForm.deptName" :disabled="review"></el-input> </el-form-item
