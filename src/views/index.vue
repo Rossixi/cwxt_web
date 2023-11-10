@@ -1,7 +1,7 @@
 <template>
   <div class="app-container home">
     <el-row :gutter="20">
-      <el-col :lg="16" :sm="24">
+      <el-col :lg="18" :sm="24">
         <el-card class="box-card">
           <div slot="header" class="clearfix">
             <span style="font-size: 18px; font-weight: 700">个人信息</span>
@@ -37,15 +37,19 @@
           </div>
         </el-card>
       </el-col>
-      <el-col :sm="24" :lg="8">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span>卡片名称</span>
-            <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+      <el-col :sm="24" :lg="6">
+        <el-card class="avtar-card">
+          <div class="avtar-box" v-if="user.nickName">
+            <el-avatar v-if="avatar.length > 0" :src="avatar" :size="100"></el-avatar>
+            <el-avatar v-else :size="100"
+              ><span>{{ user.nickName.charAt(0) }}</span></el-avatar
+            >
+            <h3>{{ user.nickName }}</h3>
+            <p>{{ user.deptName }}</p>
+            <p>{{ roles[0] }}</p>
           </div>
-          <div v-for="o in 4" :key="o" class="text item">
-            {{ '列表内容 ' + o }}
-          </div>
+
+          <img src="@/assets/image/avtar_bg.png" alt="" />
         </el-card>
       </el-col>
     </el-row>
@@ -54,9 +58,36 @@
       <el-col>
         <el-card>
           <el-tabs v-model="activeName" @tab-click="tabClick">
-            <el-tab-pane label="代办审批" name="first">用户管理</el-tab-pane>
-            <el-tab-pane label="已办审批" name="second">配置管理</el-tab-pane>
+            <el-tab-pane label="代办审批" name="first">
+              <el-table :data="projectList" stripe>
+                <el-table-column label="项目名称" prop="proName">
+                  <template slot-scope="scope">
+                    <p class="pro-name" @click="handleApprove(scope.row)">{{ scope.row.proName }}</p>
+                  </template>
+                </el-table-column>
+                >
+                <el-table-column label="时间" align="center" prop="appTime" width="500" />
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="已办审批" name="second">
+              <el-table :data="projectList" stripe>
+                <el-table-column label="项目名称" prop="proName">
+                  <template slot-scope="scope">
+                    <p class="pro-name" @click="handleApprove(scope.row)">{{ scope.row.proName }}</p>
+                  </template>
+                </el-table-column>
+                >
+                <el-table-column label="时间" align="center" prop="appTime" width="500" />
+              </el-table>
+            </el-tab-pane>
           </el-tabs>
+          <pagination
+            v-show="total > 0"
+            :total="total"
+            :page.sync="selectData.PageNum"
+            :limit.sync="selectData.PageSize"
+            @pagination="getMatters"
+          />
         </el-card>
       </el-col>
     </el-row>
@@ -66,7 +97,9 @@
 
 <script>
 const defaultSettings = require('@/settings.js')
+import { mapGetters } from 'vuex'
 import { getUserProfile } from '@/api/system/user'
+import { getPersonalMatters } from '@/api/project/selfassessment'
 
 export default {
   name: 'index',
@@ -77,15 +110,32 @@ export default {
       activeName: 'first',
       user: {},
       roles: [],
+      // 查询参数
+      selectData: {
+        proName: '',
+        PageNum: 1,
+        PageSize: 10,
+        target: 'todo',
+        Sort: 'AppTime',
+        SortType: 'descending',
+        state: '',
+      },
+      total: 0,
+      projectList: [],
     }
   },
   created() {
     this.getUser()
+    this.getMatters()
+  },
+  computed: {
+    ...mapGetters(['avatar']),
   },
   methods: {
     // 获取用户信息
     getUser() {
       getUserProfile().then((response) => {
+        console.log(response)
         this.user = response.data.user
         this.roles = response.data.roles
         // this.roleGroup = response.data.roleGroup
@@ -93,9 +143,40 @@ export default {
       })
     },
 
+    // 获取代办/已办
+    getMatters() {
+      getPersonalMatters(this.selectData).then((res) => {
+        console.log(res)
+        this.projectList = res.data.result
+        this.total = res.data.totalNum
+      })
+    },
+
+    // 点击代办审批
+    handleApprove(row) {
+      if (this.selectData.target == 'todo') {
+        if (row.currentState == 10) {
+          this.$router.push({ path: '/selfdetails', query: { gid: row.gid } })
+        } else if (row.currentState < 0 || row.currentState == 6) {
+          this.$router.push({ path: '/managedetails', query: { gid: row.gid } })
+        } else {
+          this.$router.push({ path: '/reviewDetails', query: { gid: row.gid } })
+        }
+      } else {
+        console.log(11111)
+        this.$router.push({ path: '/managedetails', query: { gid: row.gid } })
+      }
+    },
+
     // 审批切换
     tabClick(tab, event) {
-      console.log(tab, event)
+      this.selectData.PageNum = 1
+      if (tab.index == '0') {
+        this.selectData.target = 'todo'
+      } else {
+        this.selectData.target = 'completed'
+      }
+      this.getMatters()
     },
   },
 }
@@ -167,17 +248,44 @@ export default {
       font-weight: 700;
     }
   }
+  .avtar-card {
+    background: #0052d9;
+    height: 300px;
+    position: relative;
 
-  .update-log {
-    ol {
-      display: block;
-      list-style-type: decimal;
-      margin-block-start: 1em;
-      margin-block-end: 1em;
-      margin-inline-start: 0;
-      margin-inline-end: 0;
-      padding-inline-start: 40px;
+    .avtar-box {
+      padding: 20px;
+
+      span {
+        font-size: 48px;
+      }
+
+      h3 {
+        font-size: 16px;
+        color: #fff;
+        line-height: 40px;
+        margin-left: 20px;
+      }
+
+      p {
+        font-size: 14px;
+        color: #fff;
+        margin-left: 20px;
+      }
     }
+
+    img {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+  }
+
+  .pro-name {
+    font-size: 14px;
+    cursor: pointer;
+    padding-left: 10px;
+    margin: 0;
   }
 }
 </style>

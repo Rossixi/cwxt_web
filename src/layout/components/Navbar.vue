@@ -33,7 +33,8 @@
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar" class="user-avatar" />
+          <el-avatar v-if="avatar.length > 0" :src="avatar" :size="40" class="user-avatar"></el-avatar>
+          <el-avatar v-else :size="40" class="user-avatar"></el-avatar>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">

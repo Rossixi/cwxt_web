@@ -38,6 +38,9 @@
                   <p>{{ projectDetails.proMainData.proTimes[0] }} 至 {{ projectDetails.proMainData.proTimes[1] }}</p>
                 </div>
               </div>
+              <div class="review-result">
+                <img class="state" src="@/assets/image/dzp.png" alt="" />
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -200,15 +203,15 @@ export default {
 
         // 修改上传type
         switch (res.data.proMainData.currentState) {
-          case '3':
+          case 3:
             this.upload.updateSupport = 'expert'
             break
 
-          case '5':
+          case 5:
             this.upload.updateSupport = 'meeting'
             break
 
-          case '10':
+          case 10:
             this.upload.updateSupport = 'self'
             break
 
@@ -224,7 +227,7 @@ export default {
         if (res.code == 200) {
           this.$message.success(res.msg)
           this.openDialog = false
-          this.$router.push({ path: '/onlineReview' })
+          this.$router.push({ path: '/selfassessment' })
         }
       })
     },
@@ -300,9 +303,16 @@ export default {
     }
 
     .review-result {
-      background: pink;
       width: 20%;
       height: 200px;
+      position: relative;
+
+      .state {
+        width: 60%;
+        position: absolute;
+        left: 0;
+        top: -60px;
+      }
     }
   }
 

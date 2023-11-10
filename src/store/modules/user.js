@@ -8,7 +8,7 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
   },
 
   mutations: {
@@ -29,7 +29,7 @@ const user = {
     },
     SET_USERINFO: (state, value) => {
       state.userInfo = value
-    }
+    },
   },
 
   actions: {
@@ -40,43 +40,48 @@ const user = {
       const code = userInfo.code
       const uuid = userInfo.uuid
       return new Promise((resolve, reject) => {
-        login(username, password, code, uuid).then(res => {
-          if (res.code == 200) {
-            setToken(res.data)
-            //提交上面的mutaions方法
-            commit('SET_TOKEN', res.data)
-            resolve() //then处理
-          } else {
-            console.log('login error ' + res);
-            reject(res) //catch处理
-          }
-        }).catch(err => {
-          reject(err);
-        })
+        login(username, password, code, uuid)
+          .then((res) => {
+            if (res.code == 200) {
+              setToken(res.data)
+              //提交上面的mutaions方法
+              commit('SET_TOKEN', res.data)
+              resolve() //then处理
+            } else {
+              console.log('login error ' + res)
+              reject(res) //catch处理
+            }
+          })
+          .catch((err) => {
+            reject(err)
+          })
       })
     },
 
     // 获取用户信息
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
-        getInfo().then(res => {
-          const data = res.data
-          const avatar = data.user.avatar == "" ? require("@/assets/image/profile.jpg") : data.user.avatar;
+        getInfo()
+          .then((res) => {
+            const data = res.data
+            const avatar = data.user.avatar == '' ? '' : process.env.VUE_APP_BASE_API + data.user.avatar
 
-          if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', data.roles)
-            commit('SET_PERMISSIONS', data.permissions)
-          } else {
-            commit('SET_ROLES', ['ROLE_DEFAULT'])
-          }
+            if (data.roles && data.roles.length > 0) {
+              // 验证返回的roles是否是一个非空数组
+              commit('SET_ROLES', data.roles)
+              commit('SET_PERMISSIONS', data.permissions)
+            } else {
+              commit('SET_ROLES', ['ROLE_DEFAULT'])
+            }
 
-          commit('SET_NAME', data.user.nickName)
-          commit('SET_AVATAR', avatar)
-          commit('SET_USERINFO', data.user) //新加
-          resolve(res)
-        }).catch(error => {
-          reject(error)
-        })
+            commit('SET_NAME', data.user.nickName)
+            commit('SET_AVATAR', avatar)
+            commit('SET_USERINFO', data.user) //新加
+            resolve(res)
+          })
+          .catch((error) => {
+            reject(error)
+          })
       })
     },
 
@@ -84,27 +89,29 @@ const user = {
     LogOut({ commit, state }) {
       console.log('退出登录')
       return new Promise((resolve, reject) => {
-        logout().then((res) => {
-          removeToken() // 必须先移除token
-          commit('SET_TOKEN', '')
-          commit('SET_ROLES', [])
-          commit('SET_PERMISSIONS', [])
-          resolve(res)
-        }).catch(error => {
-          reject(error)
-        })
+        logout()
+          .then((res) => {
+            removeToken() // 必须先移除token
+            commit('SET_TOKEN', '')
+            commit('SET_ROLES', [])
+            commit('SET_PERMISSIONS', [])
+            resolve(res)
+          })
+          .catch((error) => {
+            reject(error)
+          })
       })
     },
 
     // 前端 登出
     FedLogOut({ commit }) {
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         commit('SET_TOKEN', '')
         removeToken()
         resolve()
       })
-    }
-  }
+    },
+  },
 }
 
 export default user

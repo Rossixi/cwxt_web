@@ -10,8 +10,8 @@
             <div slot="header" class="clearfix">
               <span style="font-size: 18px; font-weight: 700">项目信息</span>
             </div>
-            <div class="flex-box">
-              <div class="personal-infor" v-if="projectDetails.proMainData">
+            <div class="flex-box" v-if="projectDetails.proMainData">
+              <div class="personal-infor">
                 <div class="infor-item">
                   <h4>项目名称</h4>
                   <p>{{ projectDetails.proMainData.proName }}</p>
@@ -41,7 +41,11 @@
                   <p>{{ projectDetails.proMainData.proTimes[0] }} 至 {{ projectDetails.proMainData.proTimes[1] }}</p>
                 </div>
               </div>
-              <div class="review-result"><img class="state" src="@/assets/image/dsh.png" alt="" /></div>
+              <div class="review-result">
+                <img class="state" :src="stateSrc" alt="" />
+                <svg-icon :icon-class="svgClass" class-name="self-result" v-show="projectDetails.proMainData.selfEvaluationResult"> </svg-icon>
+                <span>{{ projectDetails.proMainData.selfEvaluationResult }}</span>
+              </div>
             </div>
           </el-card>
         </el-col>
@@ -96,7 +100,6 @@
                     <div>
                       <h5>附件4： 绩效目标申请表</h5>
                       <el-button size="small" type="text" @click="handleReview(4)">预览</el-button>
-                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
                     </div>
                   </div>
                 </el-col>
@@ -114,6 +117,23 @@
                       <h5 :title="item.fileName">{{ item.fileName }}</h5>
                       <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
                     </div>
+                    <svg-icon
+                      v-if="projectDetails.proMainData.currentState == 0 || projectDetails.proMainData.currentState == 6"
+                      icon-class="delete"
+                      class-name="delete-icon"
+                      @click="deleteFile(item.filePath)"
+                    ></svg-icon>
+                  </div>
+                </el-col>
+                <el-col :lg="8" :sm="12">
+                  <div
+                    class="jujian-item upload"
+                    v-if="projectDetails.proMainData.currentState == 0 || projectDetails.proMainData.currentState == 6"
+                  >
+                    <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
+                    <div>
+                      <h5>如有其它附件请上传</h5>
+                    </div>
                   </div>
                 </el-col>
               </el-row>
@@ -125,7 +145,7 @@
               <div class="meeting" v-if="projectDetails.proMainData.currentState > 8">
                 <el-form ref="form" :model="proInfo" label-width="150px">
                   <el-form-item label="项目编码" prop="money">
-                    <el-input v-model="proInfo.proNo" placeholder="请输入项目编码" :disabled="projectDetails.proMainData.currentState != 9" />
+                    <el-input v-model="proInfo.proNo" placeholder="请输入项目编码" disabled />
                   </el-form-item>
                 </el-form>
               </div>
@@ -139,20 +159,6 @@
                         <h5 :title="item.fileName">{{ item.fileName }}</h5>
                         <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
                       </div>
-                      <svg-icon
-                        v-if="projectDetails.proMainData.currentState == 3"
-                        icon-class="delete"
-                        class-name="delete-icon"
-                        @click="deleteFile(item.filePath)"
-                      ></svg-icon>
-                    </div>
-                  </el-col>
-                  <el-col :lg="8" :sm="12">
-                    <div class="jujian-item upload" v-if="projectDetails.proMainData.currentState == 3">
-                      <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
-                      <div>
-                        <h5>请上传财务处专家审查意见汇总</h5>
-                      </div>
                     </div>
                   </el-col>
                 </el-row>
@@ -165,22 +171,11 @@
               <div class="meeting">
                 <el-form ref="form" :model="proInfo" label-width="150px">
                   <el-form-item label="审批金额（万元）" prop="money">
-                    <el-input
-                      v-model="proInfo.reviewAmount"
-                      placeholder="请输入审批金额"
-                      type="number"
-                      :disabled="projectDetails.proMainData.currentState != 5"
-                    />
+                    <el-input v-model="proInfo.reviewAmount" placeholder="请输入审批金额" type="number" disabled />
                   </el-form-item>
 
                   <el-form-item label="会议纪要文字说明" prop="remark">
-                    <el-input
-                      v-model="proInfo.meetingMinutes"
-                      type="textarea"
-                      rows="5"
-                      placeholder="请输入会议纪要文字说明"
-                      :disabled="projectDetails.proMainData.currentState != 5"
-                    ></el-input>
+                    <el-input v-model="proInfo.meetingMinutes" type="textarea" rows="5" placeholder="请输入会议纪要文字说明" disabled></el-input>
                   </el-form-item>
                 </el-form>
               </div>
@@ -193,20 +188,6 @@
                       <div class="filename">
                         <h5 :title="item.fileName">{{ item.fileName }}</h5>
                         <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
-                      </div>
-                      <svg-icon
-                        v-if="projectDetails.proMainData.currentState == 5"
-                        icon-class="delete"
-                        class-name="delete-icon"
-                        @click="deleteFile(item.filePath)"
-                      ></svg-icon>
-                    </div>
-                  </el-col>
-                  <el-col :lg="8" :sm="12">
-                    <div class="jujian-item upload" v-if="projectDetails.proMainData.currentState == 5">
-                      <el-button icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
-                      <div>
-                        <h5>请上传扫描版会议纪要</h5>
                       </div>
                     </div>
                   </el-col>
@@ -260,12 +241,12 @@
               </div>
             </div>
 
-            <div class="btns" v-if="projectDetails.proMainData.currentState == 5">
-              <button class="submit" @click="submitApproval">通过</button>
+            <div class="btns" v-if="projectDetails.proMainData.currentState == 0 || projectDetails.proMainData.currentState == 6">
+              <button class="submit" @click="editManage">保存</button>
+              <button @click="backList">返回</button>
             </div>
             <div class="btns" v-else>
-              <button class="submit" @click="approve">通过</button>
-              <button @click="dismissal">驳回</button>
+              <button @click="backList">返回</button>
             </div>
           </el-card>
         </el-col>
@@ -297,22 +278,6 @@
         </el-col>
       </el-row>
     </div>
-
-    <!-- 通过/驳回弹框 -->
-    <el-dialog :title="dialogTitle" :visible.sync="openDialog" width="500px" append-to-body>
-      <el-input
-        v-model="approval.approvalOpinions"
-        type="textarea"
-        rows="5"
-        placeholder="请输入审核意见"
-        maxlength="100"
-        show-word-limit
-      ></el-input>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="closeDialog">取 消</el-button>
-        <el-button type="primary" @click="submitApproval">确定{{ dialogTitle.substring(0, 2) }}</el-button>
-      </div>
-    </el-dialog>
 
     <!-- 上传弹窗 -->
     <el-dialog :title="upload.title" :visible.sync="upload.open" width="400px" append-to-body>
@@ -353,6 +318,8 @@ export default {
       itemNum: null,
       dialogTitle: '通过审核意见',
       openDialog: false,
+      svgClass: '',
+      stateSrc: '',
       comments: '',
       approval: {
         approvalAction: '',
@@ -397,7 +364,6 @@ export default {
     }
   },
   created() {
-    console.log(this.$route.query)
     this.getProjectDetails(this.$route.query.gid)
   },
   methods: {
@@ -412,39 +378,35 @@ export default {
         this.proInfo.proNo = res.data.assignmentForm.proNo
 
         let currentStateArr = [-8, -9, -10]
+
         if (this.projectDetails.proMainData.currentState < 0) {
           if (currentStateArr.some((item) => item == this.projectDetails.proMainData.currentState)) {
             this.projectDetails.proMainData.currentState = 6
           } else {
             this.projectDetails.proMainData.currentState = 0
           }
+          this.stateSrc = require('@/assets/image/dsh.png')
+        } else if (this.projectDetails.proMainData.currentState == 10) {
+          this.stateSrc = require('@/assets/image/dzp.png')
+        } else if (this.projectDetails.proMainData.currentState == 11) {
+          this.stateSrc = require('@/assets/image/yjx.png')
+        } else {
+          this.stateSrc = require('@/assets/image/dsh.png')
         }
-        console.log(this.projectDetails.proMainData.currentState)
 
+        if (this.projectDetails.proMainData.selfEvaluationResult == '优') {
+          this.svgClass = 'bg_A'
+        } else if (this.projectDetails.proMainData.selfEvaluationResult == '差') {
+          this.svgClass = 'bg_D'
+        } else {
+          this.svgClass = 'bg_BC'
+        }
         // 审批进度
         for (let i = 0; i < res.data.approval.length; i++) {
           this.scheduleList[i].approvalName = res.data.approval[i].nickName
           this.scheduleList[i].time = res.data.approval[i].approvaledTime
 
           this.scheduleList[i].approvalcontent = res.data.approval[i].approvalOpinions
-        }
-
-        // 修改上传type
-        switch (res.data.proMainData.currentState) {
-          case 3:
-            this.upload.updateSupport = 'expert'
-            break
-
-          case 5:
-            this.upload.updateSupport = 'meeting'
-            break
-
-          case 10:
-            this.upload.updateSupport = 'self'
-            break
-
-          default:
-            break
         }
       })
     },
@@ -455,7 +417,7 @@ export default {
       this.showitem = true
     },
 
-    // 财务处修改文件
+    // 修改文件
     editProject(e1, e2) {
       switch (e2) {
         case 'one':
@@ -487,13 +449,6 @@ export default {
         default:
           break
       }
-      editProject(this.projectDetails).then((res) => {
-        console.log(res)
-      })
-      this.$message({
-        type: 'success',
-        message: '保存成功!',
-      })
       this.showitem = false
     },
 
@@ -504,38 +459,23 @@ export default {
       this.showitem = false
     },
 
-    // 审核通过
-    approve() {
-      this.approval.approvalAction = '通过'
-      this.dialogTitle = '通过审核意见'
-      this.openDialog = true
-    },
-
-    // 审核驳回
-    dismissal() {
-      this.approval.approvalAction = '驳回'
-      this.dialogTitle = '驳回审核意见'
-      this.openDialog = true
-    },
-
-    // 提交通过/驳回
-    submitApproval() {
-      approvalSubmit({ proInfo: this.proInfo, approval: this.approval, filelist: this.uploadFile }).then((res) => {
+    // 复审/退回修改
+    editManage() {
+      editProject(this.projectDetails).then((res) => {
         if (res.code == 200) {
-          this.$message.success(res.msg)
-          this.openDialog = false
-          this.$router.push({ path: '/onlineReview' })
+          this.$message({
+            type: 'success',
+            message: '保存成功!',
+          })
+          this.$router.replace({ path: '/manage' })
         }
       })
     },
 
-    // 关闭弹窗
-    closeDialog() {
-      this.approval = {
-        approvalAction: '',
-        approvalOpinions: '',
-      }
-      this.openDialog = false
+    // 返回列表
+    backList() {
+      this.$store.dispatch('/managedetails', this.$route)
+      this.$router.push({ path: '/manage' })
     },
 
     // 下载
@@ -611,6 +551,7 @@ export default {
     .review-result {
       width: 20%;
       height: 200px;
+      padding: 80px 50px 0;
       position: relative;
 
       .state {
@@ -619,14 +560,26 @@ export default {
         left: 0;
         top: -60px;
       }
-    }
-  }
 
-  .content {
+      .self-result {
+        width: 150px;
+        height: 150px;
+      }
+
+      span {
+        position: absolute;
+        top: 135px;
+        left: 90px;
+        font-size: 36px;
+        font-weight: 700;
+        color: #fff;
+      }
+    }
   }
 
   .second-box {
     margin-top: 20px;
+    // height: calc(100% - 55px);
     height: calc(100% - 25px);
 
     .small-title {

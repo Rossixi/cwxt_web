@@ -112,8 +112,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.online-review {
-  min-height: 880px;
+.app-container {
   background: #eeeeee;
 }
 

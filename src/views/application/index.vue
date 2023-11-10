@@ -70,10 +70,10 @@
           </div> -->
         </div>
         <h3>其它附件</h3>
-        <el-button plain icon="el-icon-upload2" size="mini" @click="handleImport" v-hasPermi="['system:user:import']">上传文件</el-button>
+        <el-button plain icon="el-icon-upload2" size="mini" @click="handleImport">上传文件</el-button>
         <file-list ref="fileListRef" :list="pageForm.fileList" :showDel="true" @delete-file="deleteFile"></file-list>
         <h3 style="margin-top: 30px">项目申报信息</h3>
-        <el-form ref="pageFormRef" :model="pageForm" label-width="110px">
+        <el-form ref="pageFormRef" :model="pageForm" label-width="130px">
           <el-row :gutter="50">
             <el-col :lg="8"
               ><el-form-item label="项目名称"> <el-input v-model="pageForm.proMainData.proName" disabled></el-input> </el-form-item
@@ -246,7 +246,7 @@ export default {
           appAmount: '',
           reviewAmount: '',
           proTimes: [],
-          currentState: '',
+          currentState: 1,
           meetingMinutes: '',
           nickName: '',
         },
@@ -275,6 +275,7 @@ export default {
           this.firstCompleted = true
           this.pageForm.proMainData.proName = this.pageForm.assignmentForm.proName
           this.pageForm.proMainData.appTime = new Date()
+          this.pageForm.proMainData.proTimes = []
           this.pageForm.proMainData.proTimes.push(this.pageForm.assignmentForm.proPlan[0].startTime)
           this.pageForm.proMainData.proTimes.push(this.pageForm.assignmentForm.proPlan[this.pageForm.assignmentForm.proPlan.length - 1].endTime)
 
@@ -434,7 +435,7 @@ export default {
           appAmount: '',
           reviewAmount: '',
           proTimes: [],
-          currentState: '',
+          currentState: 1,
           meetingMinutes: '',
           nickName: '',
         },

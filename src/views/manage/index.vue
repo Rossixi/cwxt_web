@@ -2,15 +2,10 @@
   <div class="app-container online-review">
     <div class="app-main">
       <el-form :model="selectData" ref="queryForm" :inline="true" label-width="68px">
-        <el-form-item label="项目状态" prop="proState">
-          <el-input
-            v-model="selectData.proName"
-            placeholder="请输入项目申报名称"
-            clearable
-            size="small"
-            style="width: 240px"
-            @keyup.enter.native="handleQuery"
-          />
+        <el-form-item label="项目状态" prop="state">
+          <el-select v-model="selectData.state" placeholder="请选择项目状态">
+            <el-option v-for="dict in stateList" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"> </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="项目名称" prop="proState">
           <el-input
@@ -61,7 +56,7 @@
 </template>
 
 <script>
-import { getProList } from '@/api/project/onlineview'
+import { getManageList } from '@/api/project/manage'
 export default {
   name: 'onlineReview',
   data() {
@@ -71,11 +66,14 @@ export default {
         proName: '',
         PageNum: 1,
         PageSize: 10,
+        state: '',
       },
       total: 0,
       projectList: [],
       // 类型数据字典
       statusOptions: [],
+      // 项目状态list
+      stateList: [],
     }
   },
   created() {
@@ -83,6 +81,7 @@ export default {
 
     let dictParams = [{ dictType: 'pro_status', columnName: 'statusOptions' }]
     this.getDicts(dictParams).then((response) => {
+      this.stateList = response.data[0].list
       response.data.forEach((element) => {
         this[element.columnName] = element.list
       })
@@ -91,7 +90,7 @@ export default {
   methods: {
     // 获取项目列表
     getProjectList() {
-      getProList(this.selectData).then((res) => {
+      getManageList(this.selectData).then((res) => {
         console.log(res)
         this.projectList = res.data.result
         this.total = res.data.totalNum
@@ -111,6 +110,7 @@ export default {
     // 查看申报项目
     handleReview(id) {
       console.log(id)
+      this.$router.push({ path: '/managedetails', query: { gid: id } })
     },
 
     // 状态字典翻译

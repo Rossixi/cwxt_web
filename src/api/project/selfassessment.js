@@ -8,3 +8,12 @@ export function getSelfAssessment(query) {
     params: query,
   })
 }
+
+// 获取代办/已办列表
+export function getPersonalMatters(query) {
+  return request({
+    url: '/project/personal/matters',
+    method: 'get',
+    params: query,
+  })
+}

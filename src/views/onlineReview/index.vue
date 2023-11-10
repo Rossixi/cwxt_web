@@ -63,6 +63,7 @@ export default {
         PageSize: 10,
         Sort: 'AppTime',
         SortType: 'descending',
+        state: '',
       },
       total: 0,
       projectList: [],
@@ -84,7 +85,6 @@ export default {
     // 获取项目列表
     getProjectList() {
       getProList(this.selectData).then((res) => {
-        console.log(res)
         this.projectList = res.data.result
         this.total = res.data.totalNum
       })

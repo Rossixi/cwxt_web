@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="81.297" height="89.105" viewBox="0 0 81.297 89.105">
+  <g id="bg2" transform="translate(-745 -192)">
+    <path id="多边形_1" data-name="多边形 1" d="M30.642,11.773a8,8,0,0,1,13.8,0L68.026,52a8,8,0,0,1-6.9,12.046H13.963A8,8,0,0,1,7.061,52Z" transform="matrix(-0.259, 0.966, -0.966, -0.259, 826.297, 208.576)" fill="#f52f3e" opacity="0.2"/>
+    <path id="多边形_2" data-name="多边形 2" d="M30.6,11.78a8,8,0,0,1,13.8,0l23.54,40.176A8,8,0,0,1,61.04,64H13.96a8,8,0,0,1-6.9-12.044Z" transform="translate(817.485 199.347) rotate(90)" fill="#f52f3e" opacity="0.7"/>
+  </g>
+</svg>
