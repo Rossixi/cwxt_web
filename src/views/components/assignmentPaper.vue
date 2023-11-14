@@ -1,15 +1,24 @@
 <template>
   <div class="assignment">
     <h2>项目任务书</h2>
-    <el-form ref="assignmentFormRef" :model="assignmentForm" label-position="left" label-width="250px" v-if="assignmentForm">
+    <el-form
+      ref="assignmentFormRef"
+      :model="assignmentForm"
+      :rules="assignmentRule"
+      label-position="left"
+      label-width="250px"
+      v-if="assignmentForm"
+    >
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="学校名称"> <el-input v-model="assignmentForm.schoolName" :disabled="review"></el-input> </el-form-item
+          ><el-form-item label="学校名称" prop="schoolName">
+            <el-input v-model.trim="assignmentForm.schoolName" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="项目名称"> <el-input v-model="assignmentForm.proName" :disabled="review"></el-input> </el-form-item
+          ><el-form-item label="项目名称" prop="proName">
+            <el-input v-model.trim="assignmentForm.proName" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
@@ -17,20 +26,21 @@
           ><el-form-item label="项目编码"> <el-input v-model="assignmentForm.proNo" disabled></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
-          ><el-form-item label="责任部门"> <el-input v-model="assignmentForm.deptName" :disabled="review"></el-input> </el-form-item
+          ><el-form-item label="责任部门" prop="deptName"> <el-input v-model="assignmentForm.deptName" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="实施地址"> <el-input v-model="assignmentForm.address" :disabled="review"></el-input> </el-form-item
+          ><el-form-item label="实施地址" prop="address"> <el-input v-model="assignmentForm.address" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="12"
-          ><el-form-item label="项目负责人"> <el-input v-model="assignmentForm.headerName" :disabled="review"></el-input> </el-form-item
+          ><el-form-item label="项目负责人" prop="headerName">
+            <el-input v-model="assignmentForm.headerName" :disabled="review"></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
-          ><el-form-item label="项目负责人电话">
+          ><el-form-item label="项目负责人电话" prop="headerTel">
             <el-input
               v-model="assignmentForm.headerTel"
               type="number"
@@ -41,7 +51,7 @@
       </el-row>
       <el-row>
         <el-col :lg="24">
-          <el-form-item label="项目属性" prop="resource" class="pro-attr">
+          <el-form-item label="项目属性" prop="proAttr" class="pro-attr">
             <el-radio-group v-model="assignmentForm.proAttr" :disabled="review">
               <el-radio label="延续项目"></el-radio>
               <el-radio label="新增项目"></el-radio>
@@ -50,21 +60,21 @@
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="项目必要性分析" class="pro-necessity">
+          ><el-form-item label="项目必要性分析" class="pro-necessity" prop="proNecessity">
             <el-input type="textarea" rows="3" v-model="assignmentForm.proNecessity" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="项目可行性分析" class="pro-necessity">
+          ><el-form-item label="项目可行性分析" class="pro-necessity" prop="proFeasibility">
             <el-input type="textarea" rows="3" v-model="assignmentForm.proFeasibility" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="项目主要内容及相关预算说明" class="pro-content">
+          ><el-form-item label="项目主要内容及相关预算说明" class="pro-content" prop="proContentAndStatement">
             <el-input type="textarea" rows="5" v-model="assignmentForm.proContentAndStatement" :disabled="review"></el-input>
-            <el-form-item label="申请总金额（万元）" class="all-money">
+            <el-form-item label="申请总金额（万元）" class="all-money" prop="appAmount">
               <el-input v-model="assignmentForm.appAmount" type="number" :disabled="review"></el-input>
             </el-form-item>
           </el-form-item>
@@ -76,8 +86,8 @@
             <el-table :data="assignmentForm.economicClf" border show-summary :summary-method="getSummaries" style="width: 100%">
               <el-table-column label="经济分类">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.economicClf.economic">
-                    <el-select v-model="scope.row.economic" placeholder="请选择" :disabled="review">
+                  <el-form-item :prop="'economicClf.' + scope.$index + '.economic'" :rules="assignmentRule.economic">
+                    <el-select v-model="scope.row.economic" placeholder="请选择经济分类" :disabled="review">
                       <el-option v-for="item in economicList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
                     </el-select>
                     <!-- <el-cascader v-model="scope.row.economic" :options="options"></el-cascader> -->
@@ -86,7 +96,7 @@
               </el-table-column>
               <el-table-column label="金额（万元）">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.economicClf.money">
+                  <el-form-item :prop="'economicClf.' + scope.$index + '.money'" :rules="assignmentRule.money">
                     <el-input v-model="scope.row.money" type="number" :disabled="review"></el-input>
                   </el-form-item>
                 </template>
@@ -102,7 +112,7 @@
             <el-table :data="assignmentForm.proPlan" border style="width: 100%">
               <el-table-column label="开始时间">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.proPlan.startTime">
+                  <el-form-item :prop="'proPlan.' + scope.$index + '.startTime'" :rules="assignmentRule.startTime">
                     <el-date-picker
                       v-model="scope.row.startTime"
                       type="date"
@@ -117,7 +127,7 @@
               </el-table-column>
               <el-table-column label="结束时间">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.proPlan.endTime">
+                  <el-form-item :prop="'proPlan.' + scope.$index + '.endTime'" :rules="assignmentRule.endTime">
                     <el-date-picker
                       v-model="scope.row.endTime"
                       type="date"
@@ -132,7 +142,7 @@
               </el-table-column>
               <el-table-column label="完成的内容">
                 <template slot-scope="scope">
-                  <el-form-item :prop="assignmentForm.proPlan.content">
+                  <el-form-item :prop="'proPlan.' + scope.$index + '.content'" :rules="assignmentRule.content">
                     <el-input v-model="scope.row.content" :disabled="review"></el-input>
                   </el-form-item>
                 </template>
@@ -144,7 +154,7 @@
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="预期效益" class="pro-necessity">
+          ><el-form-item label="预期效益" class="pro-necessity" prop="expectedRevenue">
             <el-input type="textarea" rows="3" v-model="assignmentForm.expectedRevenue" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
@@ -185,6 +195,22 @@ export default {
     },
   },
   data() {
+    const validateEndTime = (rule, value, callback) => {
+      console.log(value)
+
+      if (!value) {
+        callback(new Error('请选择结束时间'))
+      } else if (!this.assignmentForm.proPlan[0].startTime) {
+        callback(new Error('请先选择开始时间'))
+        for (let i = 0; i < this.assignmentForm.proPlan.length; i++) {
+          this.assignmentForm.proPlan[i].endTime = ''
+        }
+      } else if (this.assignmentForm.proPlan[0].startTime > value) {
+        callback(new Error('结束时间要大于或等于开始时间'))
+      } else {
+        callback()
+      }
+    }
     return {
       options: [
         {
@@ -477,6 +503,25 @@ export default {
         },
       ],
       assignmentForm: null,
+      assignmentRule: {
+        schoolName: [{ required: true, message: '请输入学校名称', trigger: 'blur' }],
+        proName: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
+        deptName: [{ required: true, message: '请输入责任部门', trigger: 'blur' }],
+        address: [{ required: true, message: '请输入实施地址', trigger: 'blur' }],
+        headerName: [{ required: true, message: '请输入项目负责人', trigger: 'blur' }],
+        headerTel: [{ required: true, message: '请输入项目负责人电话', trigger: 'blur' }],
+        proAttr: [{ required: true, message: '请输入项目属性', trigger: 'change' }],
+        proNecessity: [{ required: true, message: '请输入项目必要性分析', trigger: 'blur' }],
+        proFeasibility: [{ required: true, message: '请输入项目可行性分析', trigger: 'blur' }],
+        proContentAndStatement: [{ required: true, message: '请输入项目主要内容及相关预算', trigger: 'blur' }],
+        appAmount: [{ required: true, message: '请输入项目申请总金额', trigger: 'blur' }],
+        economic: [{ required: true, message: '请选择经济分类', trigger: 'change' }],
+        money: [{ required: true, message: '请输入项目预算金额', trigger: 'blur' }],
+        startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
+        endTime: [{ required: true, validator: validateEndTime, trigger: 'blur' }],
+        content: [{ required: true, message: '请输入完成的内容', trigger: 'blur' }],
+        expectedRevenue: [{ required: true, message: '请输入预期收益', trigger: 'blur' }],
+      },
     }
   },
 
@@ -534,7 +579,14 @@ export default {
     },
 
     save() {
-      this.$emit('paper-data', this.assignmentForm, 'one')
+      this.$refs['assignmentFormRef'].validate((valid) => {
+        if (valid) {
+          this.$emit('paper-data', this.assignmentForm, 'one')
+          return true
+        } else {
+          return false
+        }
+      })
     },
 
     // 判断是否修改
@@ -580,6 +632,12 @@ export default {
   ::v-deep {
     .el-form-item {
       margin: 0;
+    }
+
+    .el-form-item__error {
+      position: absolute;
+      left: 40%;
+      top: 50%;
     }
 
     .el-form-item__label {

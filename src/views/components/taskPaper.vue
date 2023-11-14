@@ -14,7 +14,7 @@
       <!-- <el-table-column type="index" label="序号" width="45"> </el-table-column> -->
       <el-table-column label="项目名称" prop="proName" width="145"> </el-table-column>
       <el-table-column label="项目编号" prop="proNo" width="93"> </el-table-column>
-      <el-table-column label="项目内容概述" width="300">
+      <el-table-column label="项目内容概述" width="300" required="true">
         <template slot-scope="scope">
           <el-input type="textarea" v-model="scope.row.proContent" maxlength="100" show-word-limit rows="3" :disabled="review"></el-input>
         </template>
@@ -169,9 +169,9 @@ export default {
           sums[index] = '合计'
           return
         }
-        if (index === 6) {
+        if (index === 5) {
           const values = data.map((item) => {
-            return parseFloat(item.BudgetAmount)
+            return parseFloat(item.budgetAmount)
           })
           if (!values.every((value) => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
@@ -194,18 +194,28 @@ export default {
 
     save() {
       let task = JSON.parse(JSON.stringify(this.taskForm))
-      delete task[0].ProName
-      delete task[0].ProNo
-      delete task[0].ProEndTime
-      this.$emit('paper-data', task, 'three')
+      delete task[0].proName
+      delete task[0].proNo
+      delete task[0].proEndTime
+      if (!task[0].proContent) {
+        this.$message.error('请填写项目内容概述')
+        return false
+      } else {
+        this.$emit('paper-data', task, 'three')
+        return true
+      }
+    },
+
+    cancelSave() {
+      this.taskForm = JSON.parse(JSON.stringify(this.form))
     },
 
     // 判断是否修改
     isEdit() {
       let task = JSON.parse(JSON.stringify(this.taskForm))
-      delete task[0].ProName
-      delete task[0].ProNo
-      delete task[0].ProEndTime
+      delete task[0].proName
+      delete task[0].proNo
+      delete task[0].proEndTime
       console.log(task, this.form)
       return this.deepCompare(task, this.form)
     },

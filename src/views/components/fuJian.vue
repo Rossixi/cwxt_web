@@ -119,9 +119,12 @@ export default {
         cancelButtonText: '取消',
       })
         .then(() => {
-          this.$refs[ref].save()
-
-          return true
+          if (this.$refs[ref].save()) {
+            this.$refs[ref].save()
+            return true
+          } else {
+            return reject()
+          }
         })
         .catch((action) => {
           if (action === 'cancel') {
@@ -144,8 +147,12 @@ export default {
         cancelButtonText: '取消',
       })
         .then(() => {
-          this.$refs[ref].save()
-          this.$emit('cancel-paper')
+          if (this.$refs[ref].save()) {
+            this.$refs[ref].save()
+            this.$emit('cancel-paper')
+          } else {
+            return
+          }
         })
         .catch((action) => {
           if (action === 'cancel') {

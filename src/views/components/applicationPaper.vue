@@ -1,24 +1,32 @@
 <template>
   <div class="assignment">
     <h2>绩效目标申请表</h2>
-    <el-form ref="applicationFormRef" :model="applicationForm" label-position="left" label-width="250px" v-if="applicationForm">
+    <el-form
+      ref="applicationFormRef"
+      :model="applicationForm"
+      :rules="applicationRule"
+      label-position="left"
+      label-width="250px"
+      v-if="applicationForm"
+    >
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="年度"> <el-input v-model="applicationForm.specialYear" :disabled="review"></el-input> </el-form-item
+          ><el-form-item label="年度" prop="specialYear">
+            <el-input v-model="applicationForm.specialYear" :disabled="review" placeholder="请输入年度信息"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="专项名称">
-            <el-select v-model="applicationForm.specialName" placeholder="请选择" @change="getTargetTree" :disabled="review">
+          ><el-form-item label="专项名称" prop="specialName">
+            <el-select v-model="applicationForm.specialName" placeholder="请选择专项名称" @change="getTargetTree" :disabled="review">
               <el-option v-for="dict in specialName" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue">
               </el-option> </el-select></el-form-item
         ></el-col>
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="中央主管部门">
-            <el-select v-model="applicationForm.centralCompetent" placeholder="请选择" :disabled="review">
+          ><el-form-item label="中央主管部门" prop="centralCompetent">
+            <el-select v-model="applicationForm.centralCompetent" placeholder="请选择中央主管部门" :disabled="review">
               <el-option v-for="dict in centralCompetent" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"> </el-option>
             </el-select> </el-form-item
         ></el-col>
@@ -34,7 +42,7 @@
       <el-row>
         <el-col :lg="24"
           ><el-form-item label="奖金情况（万元）" class="bonus">
-            <el-form-item label="年度金额" class="bonus-child">
+            <el-form-item label="年度金额" class="bonus-child" prop="annualAmount">
               <el-input v-model="applicationForm.annualAmount" type="number" :disabled="review"></el-input>
             </el-form-item>
             <el-form-item label="其中：中央补助" class="bonus-child">
@@ -45,7 +53,7 @@
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="年度目标" class="pro-necessity">
+          ><el-form-item label="年度目标" class="pro-necessity" prop="annualTarget">
             <el-input type="textarea" rows="3" v-model="applicationForm.annualTarget" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
@@ -121,6 +129,13 @@ export default {
       spanObj: {},
       btnsList: [],
       threeTargetParams: {},
+      applicationRule: {
+        specialYear: [{ required: true, message: '请输入年度信息', trigger: 'blur' }],
+        specialName: [{ required: true, message: '请选择专项名称', trigger: 'change' }],
+        centralCompetent: [{ required: true, message: '请选择中央主管部门', trigger: 'change' }],
+        annualAmount: [{ required: true, message: '请输入年度金额', trigger: 'blur' }],
+        annualTarget: [{ required: true, message: '请输入年度目标', trigger: 'blur' }],
+      },
     }
   },
 
@@ -256,7 +271,14 @@ export default {
     },
 
     save() {
-      this.$emit('paper-data', this.applicationForm, 'four')
+      this.$refs['applicationFormRef'].validate((valid) => {
+        if (valid) {
+          this.$emit('paper-data', this.applicationForm, 'four')
+          return true
+        } else {
+          return false
+        }
+      })
     },
 
     // 判断是否修改
@@ -302,6 +324,12 @@ export default {
   ::v-deep {
     .el-form-item {
       margin: 0;
+    }
+
+    .el-form-item__error {
+      position: absolute;
+      left: 40%;
+      top: 50%;
     }
 
     .el-select {
@@ -358,6 +386,11 @@ export default {
       height: 34px;
       .el-form-item__label {
         line-height: 32px;
+      }
+      .el-form-item__error {
+        position: absolute;
+        left: 40%;
+        top: 25%;
       }
     }
 

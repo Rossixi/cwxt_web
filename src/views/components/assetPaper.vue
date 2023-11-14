@@ -96,20 +96,7 @@ export default {
 
   mounted() {
     this.assetForm = JSON.parse(JSON.stringify(this.form))
-    if (this.assetForm.length < 10 && !this.review) {
-      for (let i = this.assetForm.length - 1; i < 9; i++) {
-        this.assetForm.push({
-          assetName: '',
-          isSoftWare: '',
-          assetType: '',
-          addNum: null,
-          unitPrice: null,
-          totalPrice: null,
-          remark: '',
-          isAttachment: '',
-        })
-      }
-    }
+    this.addTenRow()
   },
 
   methods: {
@@ -146,11 +133,35 @@ export default {
 
     save() {
       this.$emit('paper-data', this.assetForm, 'two')
+      return true
+    },
+
+    cancelSave() {
+      this.assetForm = JSON.parse(JSON.stringify(this.form))
+      this.addTenRow()
+    },
+
+    // 补齐十行
+    addTenRow() {
+      if (this.assetForm.length < 10 && !this.review) {
+        for (let i = this.assetForm.length - 1; i < 9; i++) {
+          this.assetForm.push({
+            assetName: '',
+            isSoftWare: '',
+            assetType: '',
+            addNum: null,
+            unitPrice: null,
+            totalPrice: null,
+            remark: '',
+            isAttachment: '',
+          })
+        }
+      }
     },
 
     // 判断是否修改
     isEdit() {
-      return this.deepCompare(this.assetForm, this.form)
+      return this.deepCompare(this.assetForm.slice(0, 1), this.form)
     },
 
     goBack() {
