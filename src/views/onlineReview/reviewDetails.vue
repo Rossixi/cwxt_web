@@ -1,7 +1,7 @@
 <template>
   <div class="app-container review-detail">
     <div class="fujian" v-if="showitem">
-      <review-fujian :pageForm="projectDetails" :activeNum="itemNum" @back-review="backReview" @edit-project="editProject"></review-fujian>
+      <review-fujian :pageForm="projectData" :activeNum="itemNum" @back-review="backReview" @edit-project="editProject"></review-fujian>
     </div>
     <div class="content" v-else>
       <el-row :gutter="20">
@@ -52,6 +52,58 @@
           <el-card class="second-box" v-if="projectDetails.proMainData">
             <div slot="header" class="clearfix">
               <span style="font-size: 18px; font-weight: 700">附件文档</span>
+            </div>
+
+            <!-- 历史申报文件 -->
+            <div v-if="projectDetails.proMainData.currentState > 6">
+              <h4 class="small-title">历史申报文件</h4>
+
+              <div class="jujian-list">
+                <el-row :gutter="20">
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                      <div>
+                        <h5>附件1： 项目任务书（历史）</h5>
+                        <el-button size="small" type="text" @click="handleHistoryReview(1)">预览</el-button>
+                        <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                      <div>
+                        <h5>附件2： 新增资产配置限额表（历史）</h5>
+                        <el-button size="small" type="text" @click="handleHistoryReview(2)">预览</el-button>
+                        <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                      <div>
+                        <h5>附件3： 任务书汇总表（历史）</h5>
+                        <el-button size="small" type="text" @click="handleHistoryReview(3)">预览</el-button>
+                        <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                      <div>
+                        <h5>附件4： 绩效目标申请表（历史）</h5>
+                        <el-button size="small" type="text" @click="handleHistoryReview(4)">预览</el-button>
+                        <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
             </div>
 
             <h4 class="small-title">项目申报文件</h4>
@@ -124,7 +176,7 @@
 
               <div class="meeting" v-if="projectDetails.proMainData.currentState > 8">
                 <el-form ref="form" :model="proInfo" label-width="150px">
-                  <el-form-item label="项目编码" prop="money">
+                  <el-form-item label="项目编码">
                     <el-input v-model="proInfo.proNo" placeholder="请输入项目编码" :disabled="projectDetails.proMainData.currentState != 9" />
                   </el-form-item>
                 </el-form>
@@ -163,8 +215,8 @@
               <h4 class="small-title">上会审批意见</h4>
 
               <div class="meeting">
-                <el-form ref="form" :model="proInfo" label-width="150px">
-                  <el-form-item label="审批金额（万元）" prop="money">
+                <el-form ref="form" :model="proInfo" :rules="reviewRule" label-width="150px">
+                  <el-form-item label="审批金额（万元）" prop="reviewAmount">
                     <el-input
                       v-model="proInfo.reviewAmount"
                       placeholder="请输入审批金额"
@@ -173,7 +225,7 @@
                     />
                   </el-form-item>
 
-                  <el-form-item label="会议纪要文字说明" prop="remark">
+                  <el-form-item label="会议纪要文字说明" prop="meetingMinutes">
                     <el-input
                       v-model="proInfo.meetingMinutes"
                       type="textarea"
@@ -300,14 +352,18 @@
 
     <!-- 通过/驳回弹框 -->
     <el-dialog :title="dialogTitle" :visible.sync="openDialog" width="500px" append-to-body>
-      <el-input
-        v-model="approval.approvalOpinions"
-        type="textarea"
-        rows="5"
-        placeholder="请输入审核意见"
-        maxlength="100"
-        show-word-limit
-      ></el-input>
+      <el-form :model="approval" ref="form" :rules="reviewRule">
+        <el-form-item prop="approvalOpinions">
+          <el-input
+            v-model="approval.approvalOpinions"
+            type="textarea"
+            rows="5"
+            placeholder="请输入审核意见"
+            maxlength="100"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeDialog">取 消</el-button>
         <el-button type="primary" @click="submitApproval">确定{{ dialogTitle.substring(0, 2) }}</el-button>
@@ -341,7 +397,7 @@
 <script>
 import { getToken } from '@/utils/auth'
 import { downReviewFile } from '@/utils/request'
-import { getProDetail, approvalSubmit, editProject } from '@/api/project/onlineview'
+import { getProDetail, approvalSubmit, editProject, getHistoryProDetail } from '@/api/project/onlineview'
 import reviewFujian from '../components/reviewFujian.vue'
 export default {
   name: 'reviewDetails',
@@ -349,6 +405,8 @@ export default {
   data() {
     return {
       projectDetails: {},
+      projectData: {},
+      projectHistoryData: {},
       showitem: false,
       itemNum: null,
       dialogTitle: '通过审核意见',
@@ -394,17 +452,23 @@ export default {
         { examineName: '财务处审核（复审）', approvalName: '', approvalcontent: '', time: '' },
         { examineName: '绩效自评', approvalName: '', approvalcontent: '', time: '' },
       ],
+
+      // 验证规则
+      reviewRule: {
+        approvalOpinions: [{ required: true, message: '请输入审核意见', trigger: 'blur' }],
+        proNo: [{ required: true, message: '请输入项目编号', trigger: 'blur' }],
+        reviewAmount: [{ required: true, message: '请输入审批金额', trigger: 'blur' }],
+        meetingMinutes: [{ required: true, message: '请输入会议纪要', trigger: 'blur' }],
+      },
     }
   },
   created() {
-    console.log(this.$route.query)
     this.getProjectDetails(this.$route.query.gid)
   },
   methods: {
     // 获取项目列表
     getProjectDetails(id) {
       getProDetail(id).then((res) => {
-        console.log(res)
         this.projectDetails = res.data
         this.proInfo.gid = res.data.proMainData.gid
         this.proInfo.meetingMinutes = res.data.proMainData.meetingMinutes
@@ -419,7 +483,10 @@ export default {
             this.projectDetails.proMainData.currentState = 0
           }
         }
-        console.log(this.projectDetails.proMainData.currentState)
+
+        if (this.projectDetails.proMainData.currentState > 6) {
+          this.getHistoryProjectDetail(this.$route.query.gid)
+        }
 
         // 审批进度
         for (let i = 0; i < res.data.approval.length; i++) {
@@ -449,8 +516,21 @@ export default {
       })
     },
 
+    getHistoryProjectDetail(id) {
+      getHistoryProDetail(id).then((res) => {
+        this.projectHistoryData = res.data
+      })
+    },
+
     // 展示附件
     handleReview(index) {
+      this.projectData = this.projectDetails
+      this.itemNum = index
+      this.showitem = true
+    },
+
+    handleHistoryReview(index) {
+      this.projectData = this.projectHistoryData
       this.itemNum = index
       this.showitem = true
     },
@@ -520,11 +600,15 @@ export default {
 
     // 提交通过/驳回
     submitApproval() {
-      approvalSubmit({ proInfo: this.proInfo, approval: this.approval, filelist: this.uploadFile }).then((res) => {
-        if (res.code == 200) {
-          this.$message.success(res.msg)
-          this.openDialog = false
-          this.$router.push({ path: '/onlineReview' })
+      this.$refs['form'].validate((valid) => {
+        if (valid) {
+          approvalSubmit({ proInfo: this.proInfo, approval: this.approval, filelist: this.uploadFile }).then((res) => {
+            if (res.code == 200) {
+              this.$message.success(res.msg)
+              this.openDialog = false
+              this.$router.push({ path: '/onlineReview' })
+            }
+          })
         }
       })
     },

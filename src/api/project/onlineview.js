@@ -17,6 +17,14 @@ export function getProDetail(gid) {
   })
 }
 
+// 获取历史项目详细信息
+export function getHistoryProDetail(gid) {
+  return request({
+    url: '/project/gethistoryinfo/' + gid,
+    method: 'get',
+  })
+}
+
 // 提交审核意见
 export function approvalSubmit(data) {
   return request({

@@ -306,7 +306,7 @@
 <script>
 import { getToken } from '@/utils/auth'
 import { downReviewFile } from '@/utils/request'
-import { getProDetail, approvalSubmit, editProject } from '@/api/project/onlineview'
+import { getProDetail, editProject } from '@/api/project/onlineview'
 import reviewFujian from '../components/reviewFujian.vue'
 export default {
   name: 'reviewDetails',
