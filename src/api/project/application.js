@@ -44,3 +44,19 @@ export function submitProject(data) {
     data: data,
   })
 }
+
+// 获取审批人员数据
+export function getReviewer() {
+  return request({
+    url: '/project/GetReviewer',
+    method: 'get',
+  })
+}
+
+// 获取专项名称数据
+export function getSpecialName() {
+  return request({
+    url: '/project/indicators/getSpecialName',
+    method: 'get',
+  })
+}

@@ -200,6 +200,12 @@ export default {
       if (!task[0].proContent) {
         this.$message.error('请填写项目内容概述')
         return false
+      } else if (!task[0].proCategory) {
+        this.$message.error('请选择项目类别')
+        return false
+      } else if (!task[0].proNature) {
+        this.$message.error('请选择项目性质')
+        return false
       } else {
         this.$emit('paper-data', task, 'three')
         return true

@@ -120,6 +120,35 @@
             ></el-col>
           </el-row>
         </el-form>
+        <h3>选择审核人员</h3>
+        <el-form ref="reviewerRef" :model="pageForm.reviewers" :rules="reviewerRule" label-width="110px" v-if="reviewerList">
+          <el-row :gutter="50">
+            <el-col :lg="6"
+              ><el-form-item label="系部领导" prop="department">
+                <el-select v-model="pageForm.reviewers.department" placeholder="请选择系部领导">
+                  <el-option v-for="item in reviewerList.department" :key="item.userId" :label="item.nickName" :value="item.userName">
+                  </el-option> </el-select></el-form-item
+            ></el-col>
+            <el-col :lg="6"
+              ><el-form-item label="资产处" prop="asset">
+                <el-select v-model="pageForm.reviewers.asset" placeholder="请选择资产处">
+                  <el-option v-for="item in reviewerList.asset" :key="item.userId" :label="item.nickName" :value="item.userName">
+                  </el-option> </el-select></el-form-item
+            ></el-col>
+            <el-col :lg="6"
+              ><el-form-item label="财务处" prop="finance">
+                <el-select v-model="pageForm.reviewers.finance" placeholder="请选择财务处">
+                  <el-option v-for="item in reviewerList.finance" :key="item.userId" :label="item.nickName" :value="item.userName">
+                  </el-option> </el-select></el-form-item
+            ></el-col>
+            <el-col :lg="6"
+              ><el-form-item label="分管财务院长" prop="financialdean">
+                <el-select v-model="pageForm.reviewers.financialdean" placeholder="请选择分管财务院长">
+                  <el-option v-for="item in reviewerList.financialdean" :key="item.userId" :label="item.nickName" :value="item.userName">
+                  </el-option> </el-select></el-form-item
+            ></el-col>
+          </el-row>
+        </el-form>
         <div class="btns">
           <button class="submit" @click="submit">提交</button>
           <button @click="cancel">返回</button>
@@ -157,7 +186,7 @@ import { getToken } from '@/utils/auth'
 import myStep from '../components/myStep.vue'
 import fuJian from '../components/fuJian.vue'
 import fileList from '@/components/FileUpload/fileList.vue'
-import { submitProject } from '@/api/project/application'
+import { submitProject, getReviewer } from '@/api/project/application'
 
 export default {
   name: 'application',
@@ -232,6 +261,7 @@ export default {
           specialYear: '',
           centralCompetent: '',
           provincialFinance: '',
+          educationSector: '',
           annualAmount: null,
           centralSubsidies: null,
           annualTarget: '',
@@ -252,10 +282,25 @@ export default {
         },
         // 展示上传文件列表
         fileList: [],
+        reviewers: {
+          asset: '',
+          department: '',
+          finance: '',
+          financialdean: '',
+        },
+      },
+      reviewerList: null,
+      reviewerRule: {
+        asset: [{ required: true, message: '请选择资产处', trigger: 'change' }],
+        department: [{ required: true, message: '请选择部门领导', trigger: 'change' }],
+        finance: [{ required: true, message: '请选择财务处', trigger: 'change' }],
+        financialdean: [{ required: true, message: '请选择分管财务院长', trigger: 'change' }],
       },
     }
   },
-  created() {},
+  created() {
+    this.getProReviewer()
+  },
   methods: {
     closeDialog() {
       this.showDialog = false
@@ -265,6 +310,14 @@ export default {
     gotoPage(val) {
       this.activeFj = val
       this.showFuJian = true
+    },
+
+    // 获取审核人员列表
+    getProReviewer() {
+      getReviewer().then((res) => {
+        console.log(res)
+        this.reviewerList = res.data
+      })
     },
 
     // 获取page数据
@@ -353,10 +406,14 @@ export default {
     // 提交
     submit() {
       if (this.firstCompleted && this.secondCompleted && this.thirdCompleted && this.fourthCompleted) {
-        submitProject(this.pageForm).then((res) => {
-          this.$message.success('提交成功！')
-          this.resetting()
-          this.showDialog = true
+        this.$refs['reviewerRef'].validate((valid) => {
+          if (valid) {
+            submitProject(this.pageForm).then((res) => {
+              this.$message.success('提交成功！')
+              this.resetting()
+              this.showDialog = true
+            })
+          }
         })
       } else {
         this.$message.error('请先填写附件')
@@ -421,6 +478,7 @@ export default {
           specialYear: '',
           centralCompetent: '',
           provincialFinance: '',
+          educationSector: '',
           annualAmount: null,
           centralSubsidies: null,
           annualTarget: '',
@@ -441,6 +499,12 @@ export default {
         },
         // 展示上传文件列表
         fileList: [],
+        reviewers: {
+          asset: '',
+          department: '',
+          finance: '',
+          financialdean: '',
+        },
       }
     },
   },
@@ -551,7 +615,7 @@ export default {
 
   .btns {
     width: 200px;
-    margin: 20px auto;
+    margin: 100px auto 20px;
     display: flex;
     justify-content: space-between;
 

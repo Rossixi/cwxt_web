@@ -129,9 +129,7 @@ export default {
       return true
     },
   },
-  mounted() {
-    console.log('footer按钮')
-  },
+  mounted() {},
   updated() {},
   activated() {},
   destroyed() {},

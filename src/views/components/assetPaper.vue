@@ -44,7 +44,7 @@
       </el-table-column>
       <el-table-column label="新增总金额（万元）" min-width="12%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.totalPrice" type="number" :disabled="review"></el-input>
+          <el-input v-model="scope.row.totalPrice" disabled></el-input>
         </template>
       </el-table-column>
       <el-table-column label="备注" min-width="18%">
@@ -110,6 +110,9 @@ export default {
         }
         if (index === 6) {
           const values = data.map((item) => {
+            if (item.addNum && item.unitPrice) {
+              item.totalPrice = item.addNum * item.unitPrice
+            }
             return parseFloat(item.totalPrice)
           })
           if (!values.every((value) => isNaN(value))) {

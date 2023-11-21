@@ -116,7 +116,7 @@
                     <div>
                       <h5>附件1： 项目任务书</h5>
                       <el-button size="small" type="text" @click="handleReview(1)">预览</el-button>
-                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      <el-button size="small" type="text" @click="downloadFile('assignment')">下载</el-button>
                     </div>
                   </div>
                 </el-col>
@@ -126,7 +126,7 @@
                     <div>
                       <h5>附件2： 新增资产配置限额表</h5>
                       <el-button size="small" type="text" @click="handleReview(2)">预览</el-button>
-                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      <el-button size="small" type="text" @click="downloadFile('asset')">下载</el-button>
                     </div>
                   </div>
                 </el-col>
@@ -136,7 +136,7 @@
                     <div>
                       <h5>附件3： 任务书汇总表</h5>
                       <el-button size="small" type="text" @click="handleReview(3)">预览</el-button>
-                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      <el-button size="small" type="text" @click="downloadFile('task')">下载</el-button>
                     </div>
                   </div>
                 </el-col>
@@ -148,7 +148,7 @@
                     <div>
                       <h5>附件4： 绩效目标申请表</h5>
                       <el-button size="small" type="text" @click="handleReview(4)">预览</el-button>
-                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      <el-button size="small" type="text" @click="downloadFile('application')">下载</el-button>
                     </div>
                   </div>
                 </el-col>
@@ -624,7 +624,29 @@ export default {
 
     // 下载
     downloadFile(file) {
-      downReviewFile(file.downUrl, file.fileName)
+      if (Object.prototype.toString.call(file) === '[object Object]') {
+        downReviewFile(file.downUrl, file.fileName)
+      } else {
+        let fileName = ''
+        switch (file) {
+          case 'assignment':
+            fileName = '项目任务书.docx'
+            break
+          case 'asset':
+            fileName = '新增资产配置限额表.xlsx'
+            break
+          case 'task':
+            fileName = '任务书汇总表.xlsx'
+            break
+          case 'application':
+            fileName = '绩效目标申报表.xlsx'
+            break
+
+          default:
+            break
+        }
+        downReviewFile('/project/file/exportproinfo?mainid=' + this.projectDetails.proMainData.gid + '&type=' + file, fileName)
+      }
     },
 
     downloadSelfFile(file) {

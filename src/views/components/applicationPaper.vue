@@ -36,7 +36,7 @@
           ><el-form-item label="省级财政部门"> <el-input v-model="applicationForm.provincialFinance" :disabled="review"></el-input> </el-form-item
         ></el-col>
         <el-col :lg="12"
-          ><el-form-item label="省级教育部门"> <el-input v-model="applicationForm.deptName" :disabled="review"></el-input> </el-form-item
+          ><el-form-item label="省级教育部门"> <el-input v-model="applicationForm.educationSector" :disabled="review"></el-input> </el-form-item
         ></el-col>
       </el-row>
       <el-row>
@@ -99,7 +99,7 @@
 
 <script>
 import fujianMixin from './mixin/fujianMixin'
-import { getTargetTable, getThreeTarget } from '@/api/project/application'
+import { getTargetTable, getThreeTarget, getSpecialName } from '@/api/project/application'
 import { dataMethod } from '@/utils/tableObjSpanMethod.js'
 
 export default {
@@ -141,10 +141,10 @@ export default {
 
   mounted() {
     this.applicationForm = JSON.parse(JSON.stringify(this.form))
-    console.log(this.applicationForm)
 
     // 获取字典-专项名称
-    this.getDicts('pro_specialname').then((response) => {
+    getSpecialName().then((response) => {
+      console.log(response.data)
       this.specialName = response.data
     })
 
@@ -185,6 +185,7 @@ export default {
         this.spanObj = dataMethod(this.applicationForm.target)
 
         this.$nextTick(function () {
+          this.btnsList = []
           this.getBtnList()
 
           // 修改左侧label高度

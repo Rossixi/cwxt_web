@@ -201,7 +201,7 @@
             </el-form-item>
           </el-col> -->
           <el-col :lg="12">
-            <el-form-item label="角色">
+            <el-form-item label="角色" prop="roleIds">
               <el-select v-model="form.roleIds" multiple :multiple-limit="1" placeholder="请选择" @change="selectRole($event)">
                 <el-option v-for="item in roleOptions" :key="item.roleId" :label="item.roleName" :value="item.roleId" :disabled="item.status == 1">
                 </el-option>
@@ -350,6 +350,7 @@ export default {
         nickName: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],
         deptId: [{ required: true, message: '归属部门不能为空', trigger: 'change' }],
         password: [{ required: true, message: '用户密码不能为空', trigger: 'blur' }],
+        roleIds: [{ required: true, message: '角色不能为空', trigger: 'change' }],
         email: [
           { required: false, message: '邮箱地址不能为空', trigger: 'blur' },
           {
