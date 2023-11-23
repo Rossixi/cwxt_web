@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch">
-      <el-form-item label="分类名称" prop="name">
-        <el-input v-model="queryParams.name" placeholder="请输入分类名称" clearable size="small" @keyup.enter.native="handleQuery" />
+      <el-form-item label="指标名称" prop="name">
+        <el-input v-model="queryParams.name" placeholder="请输入指标名称" clearable size="small" @keyup.enter.native="handleQuery" />
       </el-form-item>
 
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="请选择分类状态" clearable size="small">
+        <el-select v-model="queryParams.status" placeholder="请选择指标状态" clearable size="small">
           <el-option label="正常" :value="0" />
           <el-option label="停用" :value="1" />
         </el-select>
@@ -22,22 +22,19 @@
       <el-col :span="1.5">
         <el-button plain type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:dept:add']">新增</el-button>
       </el-col>
-
+      <!--
       <el-col :span="1.5">
         <el-button type="info" plain icon="el-icon-sort" size="mini" @click="toggleExpandAll">展开/折叠</el-button>
-      </el-col>
+      </el-col> -->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table
-      v-if="refreshTable"
-      v-loading="loading"
-      :data="budgetList"
-      row-key="id"
-      :default-expand-all="isExpandAll"
-      :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
-    >
-      <el-table-column prop="name" label="分类名称" width="260"></el-table-column>
+    <el-table v-if="refreshTable" v-loading="loading" :data="kpiList">
+      <el-table-column prop="proCode" label="专项编码"></el-table-column>
+      <el-table-column prop="proName" label="专项名称"></el-table-column>
+      <el-table-column prop="indicatorsName1" label="一级指标"></el-table-column>
+      <el-table-column prop="indicatorsName2" label="二级指标"></el-table-column>
+      <el-table-column prop="indicatorsName3" label="三级指标"></el-table-column>
       <el-table-column label="状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="statusOptions" :value="scope.row.status" />
@@ -61,30 +58,70 @@
       </el-table-column>
     </el-table>
 
+    <pagination v-show="total > 0" :total="total" :page.sync="queryParams.PageNum" :limit.sync="queryParams.PageSize" @pagination="getList" />
+
     <!-- 添加或修改部门对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+    <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
         <el-row :gutter="20">
-          <el-col :lg="24">
-            <el-form-item label="一级分类" prop="parentId">
-              <!-- <treeselect v-model="form.parentId" :options="deptOptions" :normalizer="normalizer" placeholder="选择一级分类" /> -->
-              <el-select v-model="form.parentId" placeholder="选择一级分类" clearable size="small">
-                <el-option label="无上级分类" :value="0" />
-                <el-option v-for="item in firstBudgetName" :key="item.id" :label="item.name" :value="item.id" />
-              </el-select>
+          <el-col :lg="14">
+            <el-form-item label="专项名称" prop="proName">
+              <el-input v-model="form.proName" placeholder="请输入专项名称" />
             </el-form-item>
           </el-col>
-          <el-col :lg="13">
-            <el-form-item label="分类名称" prop="name">
-              <el-input v-model="form.name" placeholder="请输入分类名称" />
+          <el-col :lg="10">
+            <el-form-item label="专项编码" prop="proCode">
+              <el-input v-model="form.proCode" placeholder="请输入专项编码" />
             </el-form-item>
           </el-col>
-          <el-col :lg="24">
+
+          <el-col :lg="14">
+            <el-form-item label="一级指标" prop="indicatorsName1">
+              <el-input v-model="form.indicatorsName1" placeholder="请输入一级指标" />
+            </el-form-item>
+          </el-col>
+          <el-col :lg="10">
+            <el-form-item label="一级指标编码" prop="indicatorsCode1">
+              <el-input v-model="form.indicatorsCode1" placeholder="请输入一级指标编码" />
+            </el-form-item>
+          </el-col>
+          <el-col :lg="14">
+            <el-form-item label="二级指标" prop="indicatorsName2">
+              <el-input v-model="form.indicatorsName2" placeholder="请输入二级指标" />
+            </el-form-item>
+          </el-col>
+          <el-col :lg="10">
+            <el-form-item label="二级指标编码" prop="indicatorsCode2">
+              <el-input v-model="form.indicatorsCode2" placeholder="请输入二级指标编码" />
+            </el-form-item>
+          </el-col>
+          <el-col :lg="14">
+            <el-form-item label="三级指标" prop="indicatorsName3">
+              <el-input v-model="form.indicatorsName3" placeholder="请输入三级指标" />
+            </el-form-item>
+          </el-col>
+          <el-col :lg="10">
+            <el-form-item label="三级指标编码" prop="indicatorsCode3">
+              <el-input v-model="form.indicatorsCode3" placeholder="请输入三级指标编码" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :lg="12">
+            <el-form-item label="默认行数" prop="colNum">
+              <el-input v-model="form.colNum" placeholder="请输入默认行数" type="number" />
+            </el-form-item>
+          </el-col>
+          <el-col :lg="12">
             <el-form-item label="分类状态" prop="status">
               <el-select v-model="form.status" placeholder="请选择分类状态" clearable size="small">
                 <el-option label="正常" :value="0" />
                 <el-option label="停用" :value="1" />
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :lg="24">
+            <el-form-item label="指标说明" prop="indicatorsExplain">
+              <el-input type="textarea" rows="5" v-model="form.indicatorsExplain" placeholder="请输入指标说明" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -98,6 +135,7 @@
 </template>
 
 <script>
+import { listKpi, addKpi, updateKpi, deleteKpi } from '@/api/system/kpi'
 import { listBudget, firstBudget, addConomic, updateConomic, deleteConomic } from '@/api/system/budget'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -106,6 +144,15 @@ export default {
   name: 'budget',
   components: { Treeselect },
   data() {
+    const validatecolNum = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('默认行数不能为空'))
+      } else if (!/(^[1-9]\d*$)/.test(value)) {
+        callback(new Error('请输入正确的行数'))
+      } else {
+        callback()
+      }
+    }
     return {
       // 遮罩层
       loading: true,
@@ -128,19 +175,26 @@ export default {
       // 查询参数
       queryParams: {
         name: undefined,
+        PageNum: 1,
+        PageSize: 10,
         status: undefined,
       },
+      total: 0,
       // 表单参数
       form: {},
       // 表单校验
       rules: {
-        parentId: [{ required: true, message: '一级分类不能为空', trigger: 'change' }],
-        name: [{ required: true, message: '分类名称不能为空', trigger: 'blur' }],
-        status: [{ required: true, message: '分类状态不能为空', trigger: 'change' }],
+        proName: [{ required: true, message: '专项名称不能为空', trigger: 'blur' }],
+        proCode: [{ required: true, message: '专项编码不能为空', trigger: 'blur' }],
+        indicatorsName1: [{ required: true, message: '一级指标不能为空', trigger: 'blur' }],
+        indicatorsName2: [{ required: true, message: '二级指标不能为空', trigger: 'blur' }],
+        indicatorsName3: [{ required: true, message: '三级指标不能为空', trigger: 'blur' }],
+        colNum: [{ required: true, validator: validatecolNum, trigger: 'blur' }],
+        status: [{ required: true, message: '请选择分类状态', trigger: 'change' }],
       },
 
       firstBudgetName: null,
-      budgetList: [],
+      kpiList: [],
     }
   },
   created() {
@@ -159,21 +213,11 @@ export default {
       //   this.loading = false
       // })
 
-      listBudget(this.queryParams).then((res) => {
-        this.budgetList = res.data
+      listKpi(this.queryParams).then((res) => {
+        this.kpiList = res.data.result
+        this.total = res.data.totalNum
         this.loading = false
       })
-    },
-    /** 转换部门数据结构 */
-    normalizer(node) {
-      if (node.children && !node.children.length) {
-        delete node.children
-      }
-      return {
-        id: node.id,
-        label: node.name,
-        children: node.children,
-      }
     },
     // 字典状态字典翻译
     // statusFormat(row, column) {
@@ -188,20 +232,22 @@ export default {
     reset() {
       this.form = {
         id: undefined,
-        parentId: undefined,
-        name: undefined,
+        proCode: undefined,
+        proName: undefined,
+        indicatorsCode1: undefined,
+        indicatorsCode2: undefined,
+        indicatorsCode1: undefined,
+        indicatorsName1: undefined,
+        indicatorsName1: undefined,
+        indicatorsName3: undefined,
+        colNum: undefined,
         status: undefined,
       }
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
     handleQuery() {
-      this.loading = true
-
-      listBudget(this.queryParams).then((res) => {
-        this.budgetList = res.data
-        this.loading = false
-      })
+      this.getList()
     },
     /** 重置按钮操作 */
     resetQuery() {
@@ -209,41 +255,32 @@ export default {
       this.getList()
     },
     /** 新增按钮操作 */
-    handleAdd(row) {
+    handleAdd() {
       this.reset()
       this.form.id = '0'
       this.open = true
-      this.title = '添加预算经济分类'
-
-      firstBudget().then((res) => {
-        this.firstBudgetName = res.data
-      })
+      this.title = '添加绩效指标'
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      this.form.parentId = row.parentId
-      this.form.id = row.id
-      this.form.name = row.name
-      this.form.status = row.status
-      firstBudget().then((res) => {
-        this.firstBudgetName = res.data
-      })
+      console.log(row)
+      this.form = row
       this.open = true
-      this.title = '修改预算经济分类'
+      this.title = '修改绩效指标'
     },
     /** 提交按钮 */
     submitForm: function () {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           if (this.form.id != '0') {
-            updateConomic(this.form).then((response) => {
+            updateKpi(this.form).then((response) => {
               this.msgSuccess('修改成功')
               this.open = false
               this.getList()
             })
           } else {
-            addConomic(this.form).then((response) => {
+            addKpi(this.form).then((response) => {
               this.msgSuccess('新增成功')
               this.open = false
               this.getList()
@@ -254,26 +291,19 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$confirm('是否确认删除名称为 "' + row.name + '" 的数据项?', '警告', {
+      console.log(row)
+      this.$confirm('是否确认删除数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning',
       })
         .then(function () {
-          return deleteConomic(row.id)
+          return deleteKpi(row.id)
         })
         .then(() => {
           this.getList()
           this.msgSuccess('删除成功')
         })
-    },
-    //展开/折叠操作
-    toggleExpandAll() {
-      this.refreshTable = false
-      this.isExpandAll = !this.isExpandAll
-      this.$nextTick(() => {
-        this.refreshTable = true
-      })
     },
   },
 }

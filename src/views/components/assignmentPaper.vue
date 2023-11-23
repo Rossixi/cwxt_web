@@ -160,7 +160,7 @@
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="学校意见及承诺" class="school-option">
+          ><el-form-item label="单位意见及承诺" class="school-option">
             <el-input type="textarea" rows="3" v-model="assignmentForm.schoolOpinion" disabled></el-input>
             <p class="school-date">年月日</p>
           </el-form-item></el-col
@@ -211,6 +211,32 @@ export default {
         callback()
       }
     }
+
+    const validateAmount = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('申请总金额不能为空'))
+      } else if (value < 0) {
+        callback(new Error('请输入正确的金额'))
+      } else {
+        this.assignmentForm.appAmount = parseFloat(value).toFixed(2)
+        callback()
+      }
+    }
+
+    const validateMoney = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入项目预算金额'))
+      } else if (value < 0) {
+        callback(new Error('请输入正确的金额'))
+      } else {
+        for (let i = 0; i < this.assignmentForm.economicClf.length; i++) {
+          this.assignmentForm.economicClf[i].money = parseFloat(this.assignmentForm.economicClf[i].money).toFixed(2)
+        }
+
+        callback()
+      }
+    }
+
     return {
       options: [
         {
@@ -514,9 +540,9 @@ export default {
         proNecessity: [{ required: true, message: '请输入项目必要性分析', trigger: 'blur' }],
         proFeasibility: [{ required: true, message: '请输入项目可行性分析', trigger: 'blur' }],
         proContentAndStatement: [{ required: true, message: '请输入项目主要内容及相关预算', trigger: 'blur' }],
-        appAmount: [{ required: true, message: '请输入项目申请总金额', trigger: 'blur' }],
+        appAmount: [{ required: true, validator: validateAmount, trigger: 'blur' }],
         economic: [{ required: true, message: '请选择经济分类', trigger: 'change' }],
-        money: [{ required: true, message: '请输入项目预算金额', trigger: 'blur' }],
+        money: [{ required: true, validator: validateMoney, trigger: 'blur' }],
         startTime: [{ required: true, message: '请选择开始时间', trigger: 'change' }],
         endTime: [{ required: true, validator: validateEndTime, trigger: 'blur' }],
         content: [{ required: true, message: '请输入完成的内容', trigger: 'blur' }],
