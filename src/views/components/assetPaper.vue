@@ -34,15 +34,15 @@
       </el-table-column>
       <el-table-column label="新增数量" min-width="7%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.addNum" type="number" :disabled="review"></el-input>
+          <el-input v-model="scope.row.addNum" type="number" :disabled="review" @input="handleNum(scope)"></el-input>
         </template>
       </el-table-column>
-      <el-table-column label="单价（万元）" min-width="12%">
+      <el-table-column label="单价（元）" min-width="12%">
         <template slot-scope="scope">
-          <el-input v-model="scope.row.unitPrice" type="number" :disabled="review"></el-input>
+          <el-input v-model="scope.row.unitPrice" type="number" :disabled="review" @blur="fixedPrice(scope)"></el-input>
         </template>
       </el-table-column>
-      <el-table-column label="新增总金额（万元）" min-width="12%">
+      <el-table-column label="新增总金额（元）" min-width="12%">
         <template slot-scope="scope">
           <el-input v-model="scope.row.totalPrice" disabled></el-input>
         </template>
@@ -91,6 +91,7 @@ export default {
   data() {
     return {
       assetForm: null,
+      pattern: /^[1-9]\d*$/,
     }
   },
 
@@ -111,7 +112,7 @@ export default {
         if (index === 6) {
           const values = data.map((item) => {
             if (item.addNum && item.unitPrice) {
-              item.totalPrice = item.addNum * item.unitPrice
+              item.totalPrice = parseFloat(item.addNum * item.unitPrice).toFixed(2) + ''
             }
             return parseFloat(item.totalPrice)
           })
@@ -124,7 +125,7 @@ export default {
                 return prev
               }
             }, 0)
-            sums[index] += ' 万元'
+            sums[index] += ' 元'
           } else {
             sums[index] = ''
           }
@@ -165,6 +166,31 @@ export default {
     // 判断是否修改
     isEdit() {
       return this.deepCompare(this.assetForm.slice(0, 1), this.form)
+    },
+
+    fixedPrice(scope) {
+      if (scope.row.unitPrice < 0) {
+        this.$message.error('请填写正确的单价')
+        scope.row.unitPrice = ''
+        scope.row.totalPrice = ''
+      } else {
+        scope.row.unitPrice = parseFloat(scope.row.unitPrice).toFixed(2) + ''
+      }
+    },
+
+    handleNum(scope) {
+      // if (scope.row.addNum < 0) {
+      //   this.$message.error('请填写正确的数量')
+      //   scope.row.addNum = ''
+      //   scope.row.totalPrice = ''
+      // } else {
+      // }
+      const reg = /^[1-9]\d*$/
+      if (!reg.test(scope.row.addNum)) {
+        this.$message.error('请输入正确的数量')
+        scope.row.addNum = ''
+        scope.row.totalPrice = ''
+      }
     },
 
     goBack() {

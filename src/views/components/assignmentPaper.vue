@@ -196,8 +196,6 @@ export default {
   },
   data() {
     const validateEndTime = (rule, value, callback) => {
-      console.log(value)
-
       if (!value) {
         callback(new Error('请选择结束时间'))
       } else if (!this.assignmentForm.proPlan[0].startTime) {
@@ -218,7 +216,7 @@ export default {
       } else if (value < 0) {
         callback(new Error('请输入正确的金额'))
       } else {
-        this.assignmentForm.appAmount = parseFloat(value).toFixed(2)
+        this.assignmentForm.appAmount = parseFloat(value).toFixed(2) + ''
         callback()
       }
     }
@@ -230,7 +228,7 @@ export default {
         callback(new Error('请输入正确的金额'))
       } else {
         for (let i = 0; i < this.assignmentForm.economicClf.length; i++) {
-          this.assignmentForm.economicClf[i].money = parseFloat(this.assignmentForm.economicClf[i].money).toFixed(2)
+          this.assignmentForm.economicClf[i].money = parseFloat(this.assignmentForm.economicClf[i].money).toFixed(2) + ''
         }
 
         callback()
@@ -605,6 +603,7 @@ export default {
     },
 
     save() {
+      console.log(432432)
       this.$refs['assignmentFormRef'].validate((valid) => {
         if (valid) {
           this.$emit('paper-data', this.assignmentForm, 'one')

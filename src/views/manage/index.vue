@@ -67,6 +67,8 @@ export default {
         PageNum: 1,
         PageSize: 10,
         state: '',
+        sort: 'create_time',
+        sortType: 'descending',
       },
       total: 0,
       projectList: [],

@@ -218,7 +218,7 @@ export default {
       },
       pageForm: {
         assignmentForm: {
-          schoolName: '',
+          schoolName: '湖北水利水电职业学院',
           proName: '',
           proNo: '',
           deptName: '',
