@@ -57,8 +57,60 @@
             <div slot="header" class="clearfix">
               <span style="font-size: 18px; font-weight: 700">附件文档</span>
             </div>
+            <!-- 历史申报文件 -->
+            <div v-if="projectDetails.proMainData.currentState > 6">
+              <h4 class="small-title">上会审批前申报文本</h4>
 
-            <h4 class="small-title">项目申报文件</h4>
+              <div class="jujian-list">
+                <el-row :gutter="20">
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                      <div>
+                        <h5>附件1： 项目任务书（历史）</h5>
+                        <el-button size="small" type="text" @click="handleHistoryReview(1)">预览</el-button>
+                        <el-button size="small" type="text" @click="downloadFile('assignment_history')">下载</el-button>
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                      <div>
+                        <h5>附件2： 新增资产配置限额表（历史）</h5>
+                        <el-button size="small" type="text" @click="handleHistoryReview(2)">预览</el-button>
+                        <el-button size="small" type="text" @click="downloadFile('asset_history')">下载</el-button>
+                      </div>
+                    </div>
+                  </el-col>
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                      <div>
+                        <h5>附件3： 任务书汇总表（历史）</h5>
+                        <el-button size="small" type="text" @click="handleHistoryReview(3)">预览</el-button>
+                        <el-button size="small" type="text" @click="downloadFile('task_history')">下载</el-button>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
+                <el-row :gutter="20">
+                  <el-col :lg="8" :sm="12">
+                    <div class="jujian-item">
+                      <svg-icon icon-class="xml" class-name="fujian-icon"></svg-icon>
+                      <div>
+                        <h5>附件4： 绩效目标申请表（历史）</h5>
+                        <el-button size="small" type="text" @click="handleHistoryReview(4)">预览</el-button>
+                        <el-button size="small" type="text" @click="downloadFile('application_history')">下载</el-button>
+                      </div>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
+            </div>
+
+            <h4 class="small-title" v-if="projectDetails.proMainData.currentState <= 6">项目申报文本</h4>
+            <h4 class="small-title" v-else>根据上会结果修改的申报文本</h4>
 
             <div class="jujian-list">
               <el-row :gutter="20">
@@ -68,7 +120,7 @@
                     <div>
                       <h5>附件1： 项目任务书</h5>
                       <el-button size="small" type="text" @click="handleReview(1)">预览</el-button>
-                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      <el-button size="small" type="text" @click="downloadFile('assignment')">下载</el-button>
                     </div>
                   </div>
                 </el-col>
@@ -78,7 +130,7 @@
                     <div>
                       <h5>附件2： 新增资产配置限额表</h5>
                       <el-button size="small" type="text" @click="handleReview(2)">预览</el-button>
-                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      <el-button size="small" type="text" @click="downloadFile('asset')">下载</el-button>
                     </div>
                   </div>
                 </el-col>
@@ -88,7 +140,7 @@
                     <div>
                       <h5>附件3： 任务书汇总表</h5>
                       <el-button size="small" type="text" @click="handleReview(3)">预览</el-button>
-                      <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                      <el-button size="small" type="text" @click="downloadFile('task')">下载</el-button>
                     </div>
                   </div>
                 </el-col>
@@ -100,6 +152,7 @@
                     <div>
                       <h5>附件4： 绩效目标申请表</h5>
                       <el-button size="small" type="text" @click="handleReview(4)">预览</el-button>
+                      <el-button size="small" type="text" @click="downloadFile('application')">下载</el-button>
                     </div>
                   </div>
                 </el-col>
@@ -306,7 +359,7 @@
 <script>
 import { getToken } from '@/utils/auth'
 import { downReviewFile } from '@/utils/request'
-import { getProDetail, editProject } from '@/api/project/onlineview'
+import { getProDetail, editProject, getHistoryProDetail } from '@/api/project/onlineview'
 import reviewFujian from '../components/reviewFujian.vue'
 export default {
   name: 'reviewDetails',
@@ -394,6 +447,10 @@ export default {
           this.stateSrc = require('@/assets/image/dsh.png')
         }
 
+        if (this.projectDetails.proMainData.currentState > 6) {
+          this.getHistoryProjectDetail(this.$route.query.gid)
+        }
+
         if (this.projectDetails.proMainData.selfEvaluationResult == '优') {
           this.svgClass = 'bg_A'
         } else if (this.projectDetails.proMainData.selfEvaluationResult == '差') {
@@ -413,6 +470,12 @@ export default {
 
     // 展示附件
     handleReview(index) {
+      this.itemNum = index
+      this.showitem = true
+    },
+
+    handleHistoryReview(index) {
+      this.projectData = this.projectHistoryData
       this.itemNum = index
       this.showitem = true
     },
@@ -480,7 +543,41 @@ export default {
 
     // 下载
     downloadFile(file) {
-      downReviewFile(file.downUrl, file.fileName)
+      if (Object.prototype.toString.call(file) === '[object Object]') {
+        downReviewFile(file.downUrl, file.fileName)
+      } else {
+        let fileName = ''
+        switch (file) {
+          case 'assignment':
+            fileName = '项目任务书.docx'
+            break
+          case 'asset':
+            fileName = '新增资产配置限额表.xlsx'
+            break
+          case 'task':
+            fileName = '任务书汇总表.xlsx'
+            break
+          case 'application':
+            fileName = '绩效目标申报表.xlsx'
+            break
+          case 'assignment_history':
+            fileName = '项目任务书（历史）.docx'
+            break
+          case 'asset_history':
+            fileName = '新增资产配置限额表（历史）.xlsx'
+            break
+          case 'task_history':
+            fileName = '任务书汇总表（历史）.xlsx'
+            break
+          case 'application_history':
+            fileName = '绩效目标申报表（历史）.xlsx'
+            break
+
+          default:
+            break
+        }
+        downReviewFile('/project/file/exportproinfo?mainid=' + this.projectDetails.proMainData.gid + '&type=' + file, fileName)
+      }
     },
 
     downloadSelfFile(file) {
@@ -510,6 +607,12 @@ export default {
       } else {
         this.$message.error('上传失败')
       }
+    },
+
+    getHistoryProjectDetail(id) {
+      getHistoryProDetail(id).then((res) => {
+        this.projectHistoryData = res.data
+      })
     },
 
     // 删除文件
