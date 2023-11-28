@@ -99,12 +99,10 @@
 
 <script>
 import { listBudget, firstBudget, addConomic, updateConomic, deleteConomic } from '@/api/system/budget'
-import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 export default {
   name: 'budget',
-  components: { Treeselect },
   data() {
     return {
       // 遮罩层

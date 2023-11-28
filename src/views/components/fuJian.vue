@@ -61,9 +61,7 @@ export default {
     }
   },
 
-  created() {
-    console.log(this.active)
-  },
+  created() {},
 
   watch: {
     tabActive(newValue, oldValue) {

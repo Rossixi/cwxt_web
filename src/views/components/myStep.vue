@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="stepbox">
     <el-steps :active="activeNum" class="steps" :width="500">
       <el-step title="项目申请" @click.native="handleStep(0)"></el-step>
       <el-step title="系部审核" @click.native="handleStep(1)"></el-step>
@@ -42,9 +42,9 @@ export default {
 <style lang="scss" scoped>
 $publicColor: #148be6;
 $publicHeight: 35px;
+
 .steps {
-  margin: 0 auto 80px;
-  height: $publicHeight;
+  margin: 0 auto 30px;
   width: 95%;
   display: flex;
   flex-wrap: wrap;

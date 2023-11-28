@@ -56,7 +56,7 @@
 
             <!-- 历史申报文件 -->
             <div v-if="projectDetails.proMainData.currentState > 6">
-              <h4 class="small-title">历史申报文件</h4>
+              <h4 class="small-title">上会审批前申报文本</h4>
 
               <div class="jujian-list">
                 <el-row :gutter="20">
@@ -66,7 +66,7 @@
                       <div>
                         <h5>附件1： 项目任务书（历史）</h5>
                         <el-button size="small" type="text" @click="handleHistoryReview(1)">预览</el-button>
-                        <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                        <el-button size="small" type="text" @click="downloadFile('assignment_history')">下载</el-button>
                       </div>
                     </div>
                   </el-col>
@@ -76,7 +76,7 @@
                       <div>
                         <h5>附件2： 新增资产配置限额表（历史）</h5>
                         <el-button size="small" type="text" @click="handleHistoryReview(2)">预览</el-button>
-                        <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                        <el-button size="small" type="text" @click="downloadFile('asset_history')">下载</el-button>
                       </div>
                     </div>
                   </el-col>
@@ -86,7 +86,7 @@
                       <div>
                         <h5>附件3： 任务书汇总表（历史）</h5>
                         <el-button size="small" type="text" @click="handleHistoryReview(3)">预览</el-button>
-                        <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                        <el-button size="small" type="text" @click="downloadFile('task_history')">下载</el-button>
                       </div>
                     </div>
                   </el-col>
@@ -98,7 +98,7 @@
                       <div>
                         <h5>附件4： 绩效目标申请表（历史）</h5>
                         <el-button size="small" type="text" @click="handleHistoryReview(4)">预览</el-button>
-                        <!-- <el-button size="small" type="text" @click="downloadFile(scope.row.gid)">下载</el-button> -->
+                        <el-button size="small" type="text" @click="downloadFile('application_history')">下载</el-button>
                       </div>
                     </div>
                   </el-col>
@@ -106,7 +106,8 @@
               </div>
             </div>
 
-            <h4 class="small-title">项目申报文件</h4>
+            <h4 class="small-title" v-if="projectDetails.proMainData.currentState <= 6">项目申报文本</h4>
+            <h4 class="small-title" v-else>根据上会结果修改的申报文本</h4>
 
             <div class="jujian-list">
               <el-row :gutter="20">
@@ -640,6 +641,18 @@ export default {
             break
           case 'application':
             fileName = '绩效目标申报表.xlsx'
+            break
+          case 'assignment_history':
+            fileName = '项目任务书（历史）.docx'
+            break
+          case 'asset_history':
+            fileName = '新增资产配置限额表（历史）.xlsx'
+            break
+          case 'task_history':
+            fileName = '任务书汇总表（历史）.xlsx'
+            break
+          case 'application_history':
+            fileName = '绩效目标申报表（历史）.xlsx'
             break
 
           default:

@@ -230,7 +230,7 @@ export default {
           proFeasibility: '',
           proContentAndStatement: '',
           appAmount: null,
-          economicClf: [{ economic: '', money: null }],
+          economicClf: [{ economic: null, money: null }],
           proPlan: [{ startTime: '', endTime: '', content: '' }],
           expectedRevenue: '',
           schoolOpinion: '',
@@ -406,15 +406,19 @@ export default {
     // 提交
     submit() {
       if (this.firstCompleted && this.secondCompleted && this.thirdCompleted && this.fourthCompleted) {
-        this.$refs['reviewerRef'].validate((valid) => {
-          if (valid) {
-            submitProject(this.pageForm).then((res) => {
-              this.$message.success('提交成功！')
-              this.resetting()
-              this.showDialog = true
-            })
-          }
-        })
+        if (this.pageForm.assetForm.some((item) => item.isAttachment == '有') && this.pageForm.fileList.length == 0) {
+          this.$message.error('请上传其它附件')
+        } else {
+          this.$refs['reviewerRef'].validate((valid) => {
+            if (valid) {
+              submitProject(this.pageForm).then((res) => {
+                this.$message.success('提交成功！')
+                this.resetting()
+                this.showDialog = true
+              })
+            }
+          })
+        }
       } else {
         this.$message.error('请先填写附件')
       }

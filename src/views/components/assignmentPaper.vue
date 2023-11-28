@@ -74,7 +74,7 @@
         <el-col :lg="24"
           ><el-form-item label="项目主要内容及相关预算说明" class="pro-content" prop="proContentAndStatement">
             <el-input type="textarea" rows="5" v-model="assignmentForm.proContentAndStatement" :disabled="review"></el-input>
-            <el-form-item label="申请总金额（万元）" class="all-money" prop="appAmount">
+            <el-form-item label="申请总金额（元）" class="all-money" prop="appAmount">
               <el-input v-model="assignmentForm.appAmount" type="number" :disabled="review"></el-input>
             </el-form-item>
           </el-form-item>
@@ -87,14 +87,23 @@
               <el-table-column label="经济分类">
                 <template slot-scope="scope">
                   <el-form-item :prop="'economicClf.' + scope.$index + '.economic'" :rules="assignmentRule.economic">
-                    <el-select v-model="scope.row.economic" placeholder="请选择经济分类" :disabled="review">
+                    <!-- <el-select v-model="scope.row.economic" placeholder="请选择经济分类" :disabled="review">
                       <el-option v-for="item in economicList" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                    </el-select>
+                    </el-select> -->
                     <!-- <el-cascader v-model="scope.row.economic" :options="options"></el-cascader> -->
+                    <treeselect
+                      v-model="scope.row.economic"
+                      :options="budgetOptions"
+                      :normalizer="normalizer"
+                      placeholder="选择经济分类"
+                      :append-to-body="true"
+                      z-index="9999"
+                      :disabled="review"
+                    />
                   </el-form-item>
                 </template>
               </el-table-column>
-              <el-table-column label="金额（万元）">
+              <el-table-column label="金额（元）">
                 <template slot-scope="scope">
                   <el-form-item :prop="'economicClf.' + scope.$index + '.money'" :rules="assignmentRule.money">
                     <el-input v-model="scope.row.money" type="number" :disabled="review"></el-input>
@@ -176,6 +185,9 @@
 
 <script>
 import fujianMixin from './mixin/fujianMixin'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { listBudget } from '@/api/system/budget'
 export default {
   name: 'assignment',
   mixins: [fujianMixin],
@@ -194,6 +206,7 @@ export default {
       default: false,
     },
   },
+  components: { Treeselect },
   data() {
     const validateEndTime = (rule, value, callback) => {
       if (!value) {
@@ -236,296 +249,6 @@ export default {
     }
 
     return {
-      options: [
-        {
-          value: 'zhinan',
-          label: '指南',
-          children: [
-            {
-              value: 'shejiyuanze',
-              label: '设计原则',
-              children: [
-                {
-                  value: 'yizhi',
-                  label: '一致',
-                },
-                {
-                  value: 'fankui',
-                  label: '反馈',
-                },
-                {
-                  value: 'xiaolv',
-                  label: '效率',
-                },
-                {
-                  value: 'kekong',
-                  label: '可控',
-                },
-              ],
-            },
-            {
-              value: 'daohang',
-              label: '导航',
-              children: [
-                {
-                  value: 'cexiangdaohang',
-                  label: '侧向导航',
-                },
-                {
-                  value: 'dingbudaohang',
-                  label: '顶部导航',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          value: 'zujian',
-          label: '组件',
-          children: [
-            {
-              value: 'basic',
-              label: 'Basic',
-              children: [
-                {
-                  value: 'layout',
-                  label: 'Layout 布局',
-                },
-                {
-                  value: 'color',
-                  label: 'Color 色彩',
-                },
-                {
-                  value: 'typography',
-                  label: 'Typography 字体',
-                },
-                {
-                  value: 'icon',
-                  label: 'Icon 图标',
-                },
-                {
-                  value: 'button',
-                  label: 'Button 按钮',
-                },
-              ],
-            },
-            {
-              value: 'form',
-              label: 'Form',
-              children: [
-                {
-                  value: 'radio',
-                  label: 'Radio 单选框',
-                },
-                {
-                  value: 'checkbox',
-                  label: 'Checkbox 多选框',
-                },
-                {
-                  value: 'input',
-                  label: 'Input 输入框',
-                },
-                {
-                  value: 'input-number',
-                  label: 'InputNumber 计数器',
-                },
-                {
-                  value: 'select',
-                  label: 'Select 选择器',
-                },
-                {
-                  value: 'cascader',
-                  label: 'Cascader 级联选择器',
-                },
-                {
-                  value: 'switch',
-                  label: 'Switch 开关',
-                },
-                {
-                  value: 'slider',
-                  label: 'Slider 滑块',
-                },
-                {
-                  value: 'time-picker',
-                  label: 'TimePicker 时间选择器',
-                },
-                {
-                  value: 'date-picker',
-                  label: 'DatePicker 日期选择器',
-                },
-                {
-                  value: 'datetime-picker',
-                  label: 'DateTimePicker 日期时间选择器',
-                },
-                {
-                  value: 'upload',
-                  label: 'Upload 上传',
-                },
-                {
-                  value: 'rate',
-                  label: 'Rate 评分',
-                },
-                {
-                  value: 'form',
-                  label: 'Form 表单',
-                },
-              ],
-            },
-            {
-              value: 'data',
-              label: 'Data',
-              children: [
-                {
-                  value: 'table',
-                  label: 'Table 表格',
-                },
-                {
-                  value: 'tag',
-                  label: 'Tag 标签',
-                },
-                {
-                  value: 'progress',
-                  label: 'Progress 进度条',
-                },
-                {
-                  value: 'tree',
-                  label: 'Tree 树形控件',
-                },
-                {
-                  value: 'pagination',
-                  label: 'Pagination 分页',
-                },
-                {
-                  value: 'badge',
-                  label: 'Badge 标记',
-                },
-              ],
-            },
-            {
-              value: 'notice',
-              label: 'Notice',
-              children: [
-                {
-                  value: 'alert',
-                  label: 'Alert 警告',
-                },
-                {
-                  value: 'loading',
-                  label: 'Loading 加载',
-                },
-                {
-                  value: 'message',
-                  label: 'Message 消息提示',
-                },
-                {
-                  value: 'message-box',
-                  label: 'MessageBox 弹框',
-                },
-                {
-                  value: 'notification',
-                  label: 'Notification 通知',
-                },
-              ],
-            },
-            {
-              value: 'navigation',
-              label: 'Navigation',
-              children: [
-                {
-                  value: 'menu',
-                  label: 'NavMenu 导航菜单',
-                },
-                {
-                  value: 'tabs',
-                  label: 'Tabs 标签页',
-                },
-                {
-                  value: 'breadcrumb',
-                  label: 'Breadcrumb 面包屑',
-                },
-                {
-                  value: 'dropdown',
-                  label: 'Dropdown 下拉菜单',
-                },
-                {
-                  value: 'steps',
-                  label: 'Steps 步骤条',
-                },
-              ],
-            },
-            {
-              value: 'others',
-              label: 'Others',
-              children: [
-                {
-                  value: 'dialog',
-                  label: 'Dialog 对话框',
-                },
-                {
-                  value: 'tooltip',
-                  label: 'Tooltip 文字提示',
-                },
-                {
-                  value: 'popover',
-                  label: 'Popover 弹出框',
-                },
-                {
-                  value: 'card',
-                  label: 'Card 卡片',
-                },
-                {
-                  value: 'carousel',
-                  label: 'Carousel 走马灯',
-                },
-                {
-                  value: 'collapse',
-                  label: 'Collapse 折叠面板',
-                },
-              ],
-            },
-          ],
-        },
-        {
-          value: 'ziyuan',
-          label: '资源',
-          children: [
-            {
-              value: 'axure',
-              label: 'Axure Components',
-            },
-            {
-              value: 'sketch',
-              label: 'Sketch Templates',
-            },
-            {
-              value: 'jiaohu',
-              label: '组件交互文档',
-            },
-          ],
-        },
-      ],
-      economicList: [
-        {
-          value: '选项1',
-          label: 'A',
-        },
-        {
-          value: '选项2',
-          label: 'B',
-        },
-        {
-          value: '选项3',
-          label: 'C',
-        },
-        {
-          value: '选项4',
-          label: 'D',
-        },
-        {
-          value: '选项5',
-          label: 'E',
-        },
-      ],
       assignmentForm: null,
       assignmentRule: {
         schoolName: [{ required: true, message: '请输入学校名称', trigger: 'blur' }],
@@ -546,15 +269,27 @@ export default {
         content: [{ required: true, message: '请输入完成的内容', trigger: 'blur' }],
         expectedRevenue: [{ required: true, message: '请输入预期收益', trigger: 'blur' }],
       },
+      economicMoney: null,
+      queryParams: {
+        name: undefined,
+        status: '0',
+      },
+      budgetOptions: [],
     }
+  },
+
+  created() {
+    listBudget(this.queryParams).then((res) => {
+      this.budgetOptions = this.handleTree(res.data, 'id')
+    })
   },
 
   mounted() {
     this.assignmentForm = JSON.parse(JSON.stringify(this.form))
-    console.log(this.assignmentForm)
+
     this.$nextTick(function () {
       const labelEconomic = this.$refs.economicRef.$el.querySelector('.el-form-item__label')
-      labelEconomic.style.lineHeight = 88 + 51 * this.assignmentForm.economicClf.length + 'px'
+      labelEconomic.style.lineHeight = 88 + 53 * this.assignmentForm.economicClf.length + 'px'
       const labelProPlan = this.$refs.proPlanRef.$el.querySelector('.el-form-item__label')
       labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.proPlan.length + 'px'
     })
@@ -576,12 +311,14 @@ export default {
           sums[index] = values.reduce((prev, curr) => {
             const value = Number(curr)
             if (!isNaN(value)) {
+              this.economicMoney = prev + curr
+
               return prev + curr
             } else {
               return prev
             }
           }, 0)
-          sums[index] += ' 万元'
+          sums[index] += ' 元'
         } else {
           sums[index] = ''
         }
@@ -591,9 +328,9 @@ export default {
     },
 
     addEconomic() {
-      this.assignmentForm.economicClf.push({ economic: '', money: null })
+      this.assignmentForm.economicClf.push({ economic: null, money: null })
       const labelEconomic = this.$refs.economicRef.$el.querySelector('.el-form-item__label')
-      labelEconomic.style.lineHeight = 88 + 51 * this.assignmentForm.economicClf.length + 'px'
+      labelEconomic.style.lineHeight = 88 + 53 * this.assignmentForm.economicClf.length + 'px'
     },
 
     addProPlan() {
@@ -602,12 +339,27 @@ export default {
       labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.proPlan.length + 'px'
     },
 
+    normalizer(node) {
+      if (node.children && !node.children.length) {
+        delete node.children
+      }
+      return {
+        id: node.id,
+        label: node.name,
+        children: node.children,
+      }
+    },
+
     save() {
-      console.log(432432)
       this.$refs['assignmentFormRef'].validate((valid) => {
         if (valid) {
-          this.$emit('paper-data', this.assignmentForm, 'one')
-          return true
+          if (this.assignmentForm.appAmount != parseFloat(this.economicMoney).toFixed(2) + '') {
+            this.$message.error('申请总金额应与项目预算经济分类总价相同')
+            return false
+          } else {
+            this.$emit('paper-data', this.assignmentForm, 'one')
+            return true
+          }
         } else {
           return false
         }
@@ -626,7 +378,7 @@ export default {
 
     goBack() {
       const labelEconomic = this.$refs.economicRef.$el.querySelector('.el-form-item__label')
-      labelEconomic.style.lineHeight = 89 + 51 * this.assignmentForm.economicClf.length + 'px'
+      labelEconomic.style.lineHeight = 88 + 53 * this.assignmentForm.economicClf.length + 'px'
       const labelProPlan = this.$refs.proPlanRef.$el.querySelector('.el-form-item__label')
       labelProPlan.style.lineHeight = 48 + 51 * this.assignmentForm.proPlan.length + 'px'
       this.$emit('paper-cancel', '1')

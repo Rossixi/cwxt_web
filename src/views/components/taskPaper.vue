@@ -33,60 +33,77 @@
           </el-select>
         </template>
       </el-table-column>
-      <el-table-column label="预算金额（万元）" width="150">
-        <template slot-scope="scope">
+      <el-table-column label="预算金额（元）" prop="budgetAmount" width="150">
+        <!-- <template slot-scope="scope">
           <el-input v-model="scope.row.budgetAmount" type="number" :disabled="review"></el-input>
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column label="预期效益">
         <el-table-column label="新建改扩建校舍（平方米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.addSchoolBuildArea" type="number" :disabled="review"></el-input>
+            <el-input
+              v-model="scope.row.addSchoolBuildArea"
+              type="number"
+              :disabled="review"
+              @blur="handleFloat(scope.row.addSchoolBuildArea, 'addSchoolBuildArea')"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="维修装修校舍面积（平方米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.renovationSchoolBuildArea" :disabled="review"></el-input>
+            <el-input
+              v-model="scope.row.renovationSchoolBuildArea"
+              :disabled="review"
+              @blur="handleFloat(scope.row.renovationSchoolBuildArea, 'renovationSchoolBuildArea')"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="购置仪器设备（台套数）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.equipment" :disabled="review"></el-input>
+            <el-input v-model="scope.row.equipment" :disabled="review" @input="handleInt(scope.row.equipment, 'equipment')"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="双师型教师增加值（人数）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.teachers" :disabled="review"></el-input>
+            <el-input v-model="scope.row.teachers" :disabled="review" @input="handleInt(scope.row.teachers, 'teachers')"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="新增图书册数（万册）" width="150">
+        <el-table-column label="新增图书册数（册）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.books" :disabled="review"></el-input>
+            <el-input v-model="scope.row.books" :disabled="review" @input="handleInt(scope.row.books, 'books')"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="新建或维修运动场面积（平方米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.addSportsFieldArea" :disabled="review"></el-input>
+            <el-input
+              v-model="scope.row.addSportsFieldArea"
+              :disabled="review"
+              @blur="handleFloat(scope.row.addSportsFieldArea, 'addSportsFieldArea')"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="新增实习实训工位数（个）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.trainees" :disabled="review"></el-input>
+            <el-input v-model="scope.row.trainees" :disabled="review" @input="handleInt(scope.row.trainees, 'trainees')"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="水电气暖管网工程量（延米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.sdqngwMeters" :disabled="review"></el-input>
+            <el-input v-model="scope.row.sdqngwMeters" :disabled="review" @blur="handleFloat(scope.row.sdqngwMeters, 'sdqngwMeters')"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="建设应用信息化系统个数" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.informationSystem" :disabled="review"></el-input>
+            <el-input
+              v-model="scope.row.informationSystem"
+              :disabled="review"
+              @input="handleInt(scope.row.informationSystem, 'informationSystem')"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="道路建设面积（平方米）" width="150">
           <template slot-scope="scope">
-            <el-input v-model="scope.row.roadArea" :disabled="review"></el-input>
+            <el-input v-model="scope.row.roadArea" :disabled="review" @blur="handleFloat(scope.row.roadArea, 'roadArea')"></el-input>
           </template>
         </el-table-column>
       </el-table-column>
@@ -97,14 +114,14 @@
       <p>联系人：</p>
       <p>联系电话：</p>
     </div>
-    <div class="illustrate">
+    <!-- <div class="illustrate">
       <p>说明：</p>
       <ul>
         <li>任务书备案项目总经费合计为省财政厅下达学校批次预算总额；</li>
         <li>所有项目预计完成时间，不得晚于资金年度12月，格式为202211。</li>
         <li>项目编码规则为学校五位国标代码+资金年度+批次+序号，如武汉职院2018年第二批资金第五个项目，编码为：1083420180205</li>
       </ul>
-    </div>
+    </div> -->
     <div class="btns">
       <button class="submit" @click="save" v-if="!review">保存</button>
       <button @click="goBack()">返回</button>
@@ -148,6 +165,7 @@ export default {
     this.taskForm = JSON.parse(JSON.stringify(this.form))
     this.taskForm[0].proName = JSON.parse(JSON.stringify(this.assignForm.proName))
     this.taskForm[0].proNo = JSON.parse(JSON.stringify(this.assignForm.proNo))
+    this.taskForm[0].budgetAmount = JSON.parse(JSON.stringify(this.assignForm.appAmount))
     this.taskForm[0].proEndTime = JSON.parse(JSON.stringify(this.assignForm.proPlan[this.assignForm.proPlan.length - 1].endTime))
 
     // 获取字典-项目性质
@@ -182,7 +200,7 @@ export default {
                 return prev
               }
             }, 0)
-            sums[index] += ' 万元'
+            sums[index] += ' 元'
           } else {
             sums[index] = ''
           }
@@ -190,6 +208,18 @@ export default {
       })
 
       return sums
+    },
+
+    handleInt(value, name) {
+      const reg = /^[1-9]\d*$/
+      if (!reg.test(value)) {
+        this.$message.error('请输入正确的数量')
+        this.taskForm[0][name] = ''
+      }
+    },
+
+    handleFloat(value, name) {
+      this.taskForm[0][name] = parseFloat(value).toFixed(2) + ''
     },
 
     save() {
@@ -222,7 +252,6 @@ export default {
       delete task[0].proName
       delete task[0].proNo
       delete task[0].proEndTime
-      console.log(task, this.form)
       return this.deepCompare(task, this.form)
     },
 
@@ -331,8 +360,8 @@ export default {
   .second-line {
     width: 100%;
     height: 44px;
-    border-left: 1px solid #dcdfe6;
-    border-right: 1px solid #dcdfe6;
+    border: 1px solid #dcdfe6;
+    border-top: none;
 
     p {
       display: inline-block;

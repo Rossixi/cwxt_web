@@ -41,21 +41,6 @@ export default {
   methods: {
     getFileList() {
       this.fileList = JSON.parse(JSON.stringify(this.list))
-      console.log(this.fileList)
-      // if (this.uuid) {
-      //   getAttachmentList({ uuid: this.uuid }).then((res) => {
-      //     this.fileList = res.data
-      //     this.fileList.forEach((el, index) => {
-      //       this.fileList[index].fileDownloadPath = el.fileDownloadPath.replace(
-      //         process.env.VUE_APP_IMG_BASE_URL_REPLACE,
-      //         process.env.VUE_APP_IMG_BASE_URL,
-      //       )
-
-      //       // 转为kb，取小数点后2位
-      //       el.fileSize = parseFloat(el.fileSize / 1024).toFixed(2)
-      //     })
-      //   })
-      // }
     },
 
     handleDelete(val, index) {

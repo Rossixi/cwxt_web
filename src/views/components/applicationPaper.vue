@@ -144,7 +144,6 @@ export default {
 
     // 获取字典-专项名称
     getSpecialName().then((response) => {
-      console.log(response.data)
       this.specialName = response.data
     })
 
