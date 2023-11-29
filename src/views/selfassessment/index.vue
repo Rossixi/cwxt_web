@@ -12,6 +12,26 @@
             @keyup.enter.native="handleQuery"
           />
         </el-form-item>
+        <el-form-item label="项目编号" prop="proNo">
+          <el-input
+            v-model="selectData.proNo"
+            placeholder="请输入项目编号"
+            clearable
+            size="small"
+            style="width: 240px"
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
+        <el-form-item label="项目审批金额" prop="reviewAmount" label-width="100px">
+          <el-input
+            v-model="selectData.reviewAmount"
+            placeholder="请输入项目审批金额"
+            clearable
+            size="small"
+            style="width: 240px"
+            @keyup.enter.native="handleQuery"
+          />
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -19,6 +39,7 @@
       </el-form>
 
       <el-table :data="projectList" stripe>
+        <el-table-column label="项目编号" align="center" prop="proNo" :show-overflow-tooltip="true" />
         <el-table-column label="项目名称" prop="proName" width="500">
           <template slot-scope="scope">
             <p class="pro-name" @click="handleReview(scope.row.gid)">{{ scope.row.proName }}</p>
@@ -59,6 +80,8 @@ export default {
       // 查询参数
       selectData: {
         proName: '',
+        proNo: '',
+        reviewAmount: '',
         PageNum: 1,
         PageSize: 10,
       },

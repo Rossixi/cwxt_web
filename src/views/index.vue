@@ -77,6 +77,12 @@
                   </template>
                 </el-table-column>
                 >
+                <el-table-column label="审核状态" align="center" prop="currentState">
+                  <template slot-scope="scope">
+                    <dict-tag :options="statusOptions" :value="scope.row.currentState" />
+                  </template>
+                </el-table-column>
+                <el-table-column label="审核意见" align="center" prop="approvalOpinions" />
                 <el-table-column label="时间" align="center" prop="appTime" width="500" />
               </el-table>
             </el-tab-pane>
@@ -122,11 +128,19 @@ export default {
       },
       total: 0,
       projectList: [],
+      stateList: [],
     }
   },
   created() {
     this.getUser()
     this.getMatters()
+    let dictParams = [{ dictType: 'pro_status', columnName: 'statusOptions' }]
+    this.getDicts(dictParams).then((response) => {
+      this.stateList = response.data[0].list
+      response.data.forEach((element) => {
+        this[element.columnName] = element.list
+      })
+    })
   },
   computed: {
     ...mapGetters(['avatar']),

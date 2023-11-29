@@ -3,7 +3,7 @@
     <div class="app-main">
       <el-form :model="selectData" ref="queryForm" :inline="true" label-width="68px">
         <el-form-item label="项目状态" prop="state">
-          <el-select v-model="selectData.state" placeholder="请选择项目状态">
+          <el-select v-model="selectData.state" multiple collapse-tags placeholder="请选择项目状态" style="width: 250px">
             <el-option v-for="dict in stateList" :key="dict.dictValue" :label="dict.dictLabel" :value="dict.dictValue"> </el-option>
           </el-select>
         </el-form-item>
@@ -20,23 +20,33 @@
         <el-form-item>
           <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
           <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="exportList" v-hasPermi="['project:list:export']">导出</el-button>
         </el-form-item>
       </el-form>
 
       <el-table :data="projectList" stripe>
-        <el-table-column label="项目申报名称" prop="proName" width="500">
+        <el-table-column label="项目名称" prop="proName">
           <template slot-scope="scope">
             <p class="pro-name" @click="handleReview(scope.row.gid)">{{ scope.row.proName }}</p>
           </template>
         </el-table-column>
-        <el-table-column label="审核状态" align="center" prop="currentState">
+        <el-table-column label="项目编号" align="center" prop="proNo" :show-overflow-tooltip="true" />
+        <el-table-column label="申请时间" align="center" prop="appTime" :show-overflow-tooltip="true" />
+        <el-table-column label="申报部门" align="center" prop="deptName" :show-overflow-tooltip="true" />
+        <el-table-column label="申报金额" align="center" prop="appAmount" :show-overflow-tooltip="true" />
+
+        <el-table-column label="党委会审议金额" align="center" prop="reviewAmount" :show-overflow-tooltip="true" />
+        <el-table-column label="项目实施周期" align="center" :show-overflow-tooltip="true">
+          <el-table-column label="起" align="center" prop="proStartTime" :show-overflow-tooltip="true" />
+          <el-table-column label="止" align="center" prop="proEndTime" :show-overflow-tooltip="true" />
+        </el-table-column>
+
+        <el-table-column label="类别" align="center" prop="currentState">
           <template slot-scope="scope">
             <dict-tag :options="statusOptions" :value="scope.row.currentState" />
           </template>
         </el-table-column>
-        <el-table-column label="申请时间" align="center" prop="appTime" :show-overflow-tooltip="true" />
-        <el-table-column label="申请人" align="center" prop="nickName" :show-overflow-tooltip="true" />
-        <el-table-column label="项目金额（万元）" align="center" prop="appAmount" :show-overflow-tooltip="true" />
+        <el-table-column label="绩效评价结果" align="center" prop="selfEvaluationResult" :show-overflow-tooltip="true" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button size="mini" type="text" icon="el-icon-edit" @click="handleReview(scope.row.gid)">查看</el-button>
@@ -56,7 +66,7 @@
 </template>
 
 <script>
-import { getManageList } from '@/api/project/manage'
+import { getManageList, exportManageList } from '@/api/project/manage'
 export default {
   name: 'onlineReview',
   data() {
@@ -66,7 +76,7 @@ export default {
         proName: '',
         PageNum: 1,
         PageSize: 10,
-        state: '',
+        state: [],
         sort: 'create_time',
         sortType: 'descending',
       },
@@ -101,6 +111,7 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.selectData.PageNum = 1
+      console.log(this.selectData)
       this.getProjectList()
     },
     /** 重置按钮操作 */
@@ -109,9 +120,16 @@ export default {
       this.handleQuery()
     },
 
+    // 导出
+    exportList() {
+      exportManageList({ proName: this.selectData.proName, state: this.selectData.state }).then((res) => {
+        console.log(res)
+        // this.download(res.data.path)
+      })
+    },
+
     // 查看申报项目
     handleReview(id) {
-      console.log(id)
       this.$router.push({ path: '/managedetails', query: { gid: id } })
     },
 
