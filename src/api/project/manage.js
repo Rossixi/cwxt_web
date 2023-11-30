@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { downManageFile } from '@/utils/request'
 
 // 获取项目列表
 export function getManageList(data) {
@@ -10,12 +9,12 @@ export function getManageList(data) {
   })
 }
 
-// 导出
-export async function exportManageList(data) {
-  // return request({
-  //   url: '/project/exportProList',
-  //   method: 'post',
-  //   data: data,
-  // })
-  await downManageFile('/project/exportProList', data)
-}
+// // 导出
+// export async function exportManageList(data) {
+//   // return request({
+//   //   url: '/project/exportProList',
+//   //   method: 'post',
+//   //   data: data,
+//   // })
+//   await downManageFile('/project/exportProList', data)
+// }

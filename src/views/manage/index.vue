@@ -66,7 +66,9 @@
 </template>
 
 <script>
-import { getManageList, exportManageList } from '@/api/project/manage'
+import { getManageList } from '@/api/project/manage'
+import { downReviewFile } from '@/utils/request'
+
 export default {
   name: 'onlineReview',
   data() {
@@ -103,7 +105,6 @@ export default {
     // 获取项目列表
     getProjectList() {
       getManageList(this.selectData).then((res) => {
-        console.log(res)
         this.projectList = res.data.result
         this.total = res.data.totalNum
       })
@@ -111,7 +112,6 @@ export default {
     /** 搜索按钮操作 */
     handleQuery() {
       this.selectData.PageNum = 1
-      console.log(this.selectData)
       this.getProjectList()
     },
     /** 重置按钮操作 */
@@ -122,10 +122,10 @@ export default {
 
     // 导出
     exportList() {
-      exportManageList({ proName: this.selectData.proName, state: this.selectData.state }).then((res) => {
-        console.log(res)
-        // this.download(res.data.path)
-      })
+      downReviewFile(
+        '/project/exportProList?proName=' + this.selectData.proName + '&state=' + this.selectData.state.join(','),
+        '项目明细一览表.xlsx',
+      )
     },
 
     // 查看申报项目
