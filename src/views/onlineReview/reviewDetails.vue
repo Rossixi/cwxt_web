@@ -30,11 +30,11 @@
                 </div>
                 <div class="infor-item">
                   <h4>申报金额</h4>
-                  <p>{{ projectDetails.proMainData.appAmount }} 万元</p>
+                  <p>{{ projectDetails.proMainData.appAmount }} 元</p>
                 </div>
                 <div class="infor-item">
                   <h4>党委会审议金额</h4>
-                  <p>{{ projectDetails.proMainData.reviewAmount }} 万元</p>
+                  <p>{{ projectDetails.proMainData.reviewAmount }} 元</p>
                 </div>
                 <div class="infor-item">
                   <h4>项目起止时间</h4>
@@ -217,7 +217,7 @@
 
               <div class="meeting">
                 <el-form ref="form" :model="proInfo" :rules="reviewRule" label-width="150px">
-                  <el-form-item label="审批金额（万元）" prop="reviewAmount">
+                  <el-form-item label="审批金额" prop="reviewAmount">
                     <el-input
                       v-model="proInfo.reviewAmount"
                       placeholder="请输入审批金额"
@@ -607,6 +607,7 @@ export default {
             if (res.code == 200) {
               this.$message.success(res.msg)
               this.openDialog = false
+              location.reload()
               this.$router.push({ path: '/onlineReview' })
             }
           })

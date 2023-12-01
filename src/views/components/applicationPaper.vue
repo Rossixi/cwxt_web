@@ -41,7 +41,7 @@
       </el-row>
       <el-row>
         <el-col :lg="24"
-          ><el-form-item label="奖金情况（万元）" class="bonus">
+          ><el-form-item label="奖金情况" class="bonus">
             <el-form-item label="年度金额" class="bonus-child" prop="annualAmount">
               <el-input v-model="applicationForm.annualAmount" type="number" :disabled="review"></el-input>
             </el-form-item>

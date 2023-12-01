@@ -11,7 +11,13 @@
           ></assignment-paper>
         </el-tab-pane>
         <el-tab-pane label="附件2：新增资产配置限额表" name="2" lazy>
-          <asset-paper ref="assetRef" :form="pageForm.assetForm" @paper-data="getPaperData" @paper-cancel="paperCancel"></asset-paper>
+          <asset-paper
+            ref="assetRef"
+            :form="pageForm.assetForm"
+            :assetIllustrate="pageForm.proMainData.assetIllustrate"
+            @paper-data="getPaperData"
+            @paper-cancel="paperCancel"
+          ></asset-paper>
         </el-tab-pane>
         <el-tab-pane label="附件3：任务书汇总表" name="3" lazy>
           <task-paper

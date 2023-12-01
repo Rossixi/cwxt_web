@@ -27,11 +27,11 @@
                 </div>
                 <div class="infor-item">
                   <h4>申报金额</h4>
-                  <p>{{ projectDetails.proMainData.appAmount }} 万元</p>
+                  <p>{{ projectDetails.proMainData.appAmount }} 元</p>
                 </div>
                 <div class="infor-item">
                   <h4>党委会审议金额</h4>
-                  <p>{{ projectDetails.proMainData.reviewAmount }} 万元</p>
+                  <p>{{ projectDetails.proMainData.reviewAmount }} 元</p>
                 </div>
                 <div class="infor-item">
                   <h4>项目起止时间</h4>
@@ -100,11 +100,12 @@
 
               <h4 class="small-title">绩效自评结果</h4>
 
-              <el-form :model="approval" ref="queryForm" :inline="true" label-width="100px">
+              <el-form :model="approval" ref="queryForm" label-width="100px" :rules="approvalRule">
+                <el-form-item label="自评分数" prop="approvalAction">
+                  <el-input v-model="approval.approvalAction" placeholder="请输入自评分数" @input="changeScore" style="width: 200px" />
+                </el-form-item>
                 <el-form-item label="自评结果" prop="approvalOpinions">
-                  <el-select v-model="approval.approvalOpinions" placeholder="请选择自评结果">
-                    <el-option v-for="item in assessList" :key="item.dictValue" :label="item.dictLabel" :value="item.dictValue"> </el-option>
-                  </el-select>
+                  <el-input v-model="approval.approvalOpinions" style="width: 200px" disabled />
                 </el-form-item>
               </el-form>
             </div>
@@ -144,10 +145,20 @@
 <script>
 import { getToken } from '@/utils/auth'
 import { downReviewFile } from '@/utils/request'
-import { getProDetail, approvalSubmit, editProject } from '@/api/project/onlineview'
+import { getProDetail, approvalSubmit } from '@/api/project/onlineview'
+import { getAssetIllustrate } from '@/api/project/application'
+
 export default {
   name: 'selfDetails',
   data() {
+    const validateScore = (rule, value, callback) => {
+      const reg = /^([0-9][0-9]{0,1}|100)$/
+      if (!reg.test(value)) {
+        callback(new Error('请输入正确的分数（0-100）'))
+      } else {
+        callback()
+      }
+    }
     return {
       projectDetails: {},
 
@@ -178,6 +189,8 @@ export default {
         approvalOpinions: '',
       },
       assessList: [],
+      approvalRule: { approvalAction: [{ required: true, validator: validateScore, trigger: 'blur' }] },
+      scoreList: {},
     }
   },
   created() {
@@ -186,12 +199,15 @@ export default {
       console.log(response)
       this.assessList = response.data
     })
+    getAssetIllustrate().then((res) => {
+      console.log(res.data)
+      this.scoreList = res.data
+    })
   },
   methods: {
     // 获取项目列表
     getProjectDetails(id) {
       getProDetail(id).then((res) => {
-        console.log(res)
         this.projectDetails = res.data
         this.proInfo.gid = res.data.proMainData.gid
         this.proInfo.meetingMinutes = res.data.proMainData.meetingMinutes
@@ -232,6 +248,23 @@ export default {
       })
     },
 
+    changeScore() {
+      // this.debounce(this.editOpinions, 1000)
+      this.editOpinions()
+    },
+
+    editOpinions() {
+      if (this.approval.approvalAction >= this.scoreList.excellentScore) {
+        this.approval.approvalOpinions = '优'
+      } else if (this.scoreList.goodScore <= this.approval.approvalAction && this.approval.approvalAction < this.scoreList.excellentScore) {
+        this.approval.approvalOpinions = '良'
+      } else if (this.scoreList.averageScore <= this.approval.approvalAction && this.approval.approvalAction < this.scoreList.goodScore) {
+        this.approval.approvalOpinions = '中'
+      } else if (this.scoreList.poorScore <= this.approval.approvalAction && this.approval.approvalAction < this.scoreList.averageScore) {
+        this.approval.approvalOpinions = '差'
+      }
+    },
+
     // 下载
     downloadFile(file) {
       downReviewFile(file.downUrl, file.fileName)
@@ -239,6 +272,20 @@ export default {
 
     downloadSelfFile(file) {
       window.open(process.env.VUE_APP_BASE_API + file.downUrl, '_blank')
+    },
+
+    debounce(fun, wait = 1500) {
+      //ES6语法 wait=1500 设置参数默认值，如果没有输入wait就会使用1500
+      let timeout = null
+      return function () {
+        if (timeout) {
+          //如果存在定时器就清空
+          clearTimeout(timeout)
+        }
+        timeout = setTimeout(function () {
+          fun()
+        }, wait)
+      }
     },
 
     // 点击上传

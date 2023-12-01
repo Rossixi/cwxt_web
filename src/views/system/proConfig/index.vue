@@ -51,24 +51,24 @@
                 rows="5"
                 maxlength="200"
                 show-word-limit
-                clearable
+                :validate-event="false"
               />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <el-button type="primary" @click="submit">提交</el-button>
+      <el-button type="primary" @click="submit" class="configbtn">提 交</el-button>
     </div>
   </div>
 </template>
 
 <script>
-import { getProConfig } from '@/api/system/proconfig'
+import { getProConfig, updateProConfig } from '@/api/system/proconfig'
 export default {
   name: 'proConfig',
   data() {
     const validateScore = (rule, value, callback) => {
-      const reg = /[1-9]\d+?$|100$|0$/
+      const reg = /^([0-9][0-9]{0,1}|100)$/
       if (!reg.test(value)) {
         callback(new Error('请输入0-100之间的正整数'))
       } else {
@@ -118,6 +118,7 @@ export default {
         goodScore: [{ required: true, validator: validateScore }, { validator: validateLiang }],
         averageScore: [{ required: true, validator: validateScore }, { validator: validateZhong }],
         poorScore: [{ required: true, validator: validateScore }, { validator: validateCha }],
+        assetIllustrate: [{ required: true, message: '请输入新增资产配置说明' }],
       },
     }
   },
@@ -128,7 +129,6 @@ export default {
     // 获取项目配置
     getProjectConfig() {
       getProConfig(1).then((res) => {
-        console.log(res)
         this.configData = res.data
       })
     },
@@ -137,7 +137,11 @@ export default {
     submit() {
       this.$refs['queryForm'].validate((valid) => {
         if (valid) {
-          console.log(1111)
+          updateProConfig(this.configData).then((res) => {
+            if (res.code == 200) {
+              this.$message.success('项目配置成功')
+            }
+          })
         }
       })
     },
@@ -161,6 +165,10 @@ export default {
     margin: 0;
     line-height: 32px;
     padding-left: 10px;
+  }
+
+  .configbtn {
+    margin: 30px;
   }
 }
 </style>

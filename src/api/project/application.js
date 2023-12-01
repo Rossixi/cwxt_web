@@ -60,3 +60,11 @@ export function getSpecialName() {
     method: 'get',
   })
 }
+
+// 获取配置说明
+export function getAssetIllustrate() {
+  return request({
+    url: '/project/config/GetProConfigIllustrate',
+    method: 'get',
+  })
+}

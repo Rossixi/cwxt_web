@@ -7,3 +7,12 @@ export function getProConfig(id) {
     method: 'get',
   })
 }
+
+// 修改项目配置
+export function updateProConfig(data) {
+  return request({
+    url: '/project/config',
+    method: 'put',
+    data: data,
+  })
+}

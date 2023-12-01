@@ -77,11 +77,12 @@
                   </template>
                 </el-table-column>
                 >
-                <el-table-column label="审核状态" align="center" prop="currentState">
+                <el-table-column label="项目状态" align="center" prop="currentState">
                   <template slot-scope="scope">
                     <dict-tag :options="statusOptions" :value="scope.row.currentState" />
                   </template>
                 </el-table-column>
+                <el-table-column label="审核状态" align="center" prop="approvalAction" />
                 <el-table-column label="审核意见" align="center" prop="approvalOpinions" />
                 <el-table-column label="时间" align="center" prop="appTime" width="500" />
               </el-table>

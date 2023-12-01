@@ -112,11 +112,10 @@
           </el-row>
           <el-row :gutter="50">
             <el-col :lg="8"
-              ><el-form-item label="申报金额（万元）"> <el-input v-model="pageForm.proMainData.appAmount" disabled></el-input> </el-form-item
+              ><el-form-item label="申报金额"> <el-input v-model="pageForm.proMainData.appAmount" disabled></el-input> </el-form-item
             ></el-col>
             <el-col :lg="8"
-              ><el-form-item label="党委会审议金额（万元）">
-                <el-input v-model="pageForm.proMainData.reviewAmount" disabled></el-input> </el-form-item
+              ><el-form-item label="党委会审议金额"> <el-input v-model="pageForm.proMainData.reviewAmount" disabled></el-input> </el-form-item
             ></el-col>
           </el-row>
         </el-form>
@@ -186,7 +185,7 @@ import { getToken } from '@/utils/auth'
 import myStep from '../components/myStep.vue'
 import fuJian from '../components/fuJian.vue'
 import fileList from '@/components/FileUpload/fileList.vue'
-import { submitProject, getReviewer } from '@/api/project/application'
+import { submitProject, getReviewer, getAssetIllustrate } from '@/api/project/application'
 
 export default {
   name: 'application',
@@ -279,6 +278,7 @@ export default {
           currentState: 1,
           meetingMinutes: '',
           nickName: '',
+          assetIllustrate: null,
         },
         // 展示上传文件列表
         fileList: [],
@@ -301,6 +301,13 @@ export default {
   created() {
     this.getProReviewer()
   },
+  mounted() {
+    if (!this.pageForm.proMainData.assetIllustrate) {
+      getAssetIllustrate().then((res) => {
+        this.pageForm.proMainData.assetIllustrate = res.data.assetIllustrate
+      })
+    }
+  },
   methods: {
     closeDialog() {
       this.showDialog = false
@@ -315,7 +322,6 @@ export default {
     // 获取审核人员列表
     getProReviewer() {
       getReviewer().then((res) => {
-        console.log(res)
         this.reviewerList = res.data
       })
     },

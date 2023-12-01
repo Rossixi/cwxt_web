@@ -52,7 +52,7 @@
         </el-table-column>
         <el-table-column label="申请时间" align="center" prop="appTime" :show-overflow-tooltip="true" />
         <el-table-column label="申请人" align="center" prop="nickName" :show-overflow-tooltip="true" />
-        <el-table-column label="项目金额（万元）" align="center" prop="appAmount" :show-overflow-tooltip="true" />
+        <el-table-column label="项目金额" align="center" prop="appAmount" :show-overflow-tooltip="true" />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button size="mini" type="text" icon="el-icon-edit" @click="handleReview(scope.row.gid)">自评</el-button>

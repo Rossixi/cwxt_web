@@ -14,6 +14,7 @@
         <asset-paper
           ref="assetRef"
           :form="pageForm.assetForm"
+          :assetIllustrate="pageForm.proMainData.assetIllustrate"
           :review="pageForm.isReview"
           @paper-data="getPaperData"
           @paper-cancel="paperCancel"

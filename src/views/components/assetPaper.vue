@@ -8,7 +8,7 @@
       <div class="tiankong"></div>
       <div class="tips">
         <p>
-          注：单件资产超20万以上（包含20万）必须提供配置说明。（有无配置说明请在附件里标注清楚，配置说明单独WORD页交电子档和纸质档，并盖章签字。）
+          {{ this.assetIllustrate }}
         </p>
       </div>
     </div>
@@ -80,6 +80,11 @@ export default {
     // },
     form: {
       type: Array,
+      required: true,
+    },
+
+    assetIllustrate: {
+      type: String,
       required: true,
     },
 
@@ -165,7 +170,11 @@ export default {
 
     // 判断是否修改
     isEdit() {
-      return this.deepCompare(this.assetForm.slice(0, 1), this.form)
+      if (this.form.length == 1) {
+        return this.deepCompare(this.assetForm.slice(0, 1), this.form)
+      } else {
+        return this.deepCompare(this.assetForm, this.form)
+      }
     },
 
     fixedPrice(scope) {
