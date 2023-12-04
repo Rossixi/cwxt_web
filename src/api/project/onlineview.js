@@ -42,3 +42,12 @@ export function editProject(data) {
     data: data,
   })
 }
+
+// // 获取pdf预览
+// export function getPreview(query) {
+//   return request({
+//     url: '/project/list',
+//     method: 'get',
+//     params: query,
+//   })
+// }

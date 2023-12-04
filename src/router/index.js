@@ -25,66 +25,79 @@ import Layout from '@/layout'
  */
 
 // 公共路由
-export const constantRoutes = [{
+export const constantRoutes = [
+  {
     path: '/redirect',
     component: Layout,
     hidden: true,
-    children: [{
-      path: '/redirect/:path(.*)',
-      component: (resolve) => require(['@/views/redirect'], resolve)
-    }]
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: (resolve) => require(['@/views/redirect'], resolve),
+      },
+    ],
   },
   {
     path: '/login',
     component: (resolve) => require(['@/views/login'], resolve),
-    hidden: true
+    hidden: true,
   },
-	{
+  {
     path: '/register',
     component: (resolve) => require(['@/views/register'], resolve),
-    hidden: true
+    hidden: true,
+  },
+  {
+    path: '/preview',
+    component: (resolve) => require(['@/views/preview'], resolve),
+    hidden: true,
   },
   {
     path: '/404',
     component: (resolve) => require(['@/views/error/404'], resolve),
-    hidden: true
+    hidden: true,
   },
   {
     path: '/401',
     component: (resolve) => require(['@/views/error/401'], resolve),
-    hidden: true
+    hidden: true,
   },
   {
     path: '',
     component: Layout,
     redirect: 'index',
-    children: [{
-      path: 'index',
-      component: (resolve) => require(['@/views/index'], resolve),
-      name: 'Index',
-      meta: { title: '首页', icon: 'dashboard', affix: true }
-    }],
+    children: [
+      {
+        path: 'index',
+        component: (resolve) => require(['@/views/index'], resolve),
+        name: 'Index',
+        meta: { title: '首页', icon: 'dashboard', affix: true },
+      },
+    ],
   },
   {
     path: '/user',
     component: Layout,
     hidden: true,
     redirect: 'noredirect',
-    children: [{
-      path: 'profile',
-      component: (resolve) => require(['@/views/system/user/profile/index'], resolve),
-      name: 'Profile',
-      meta: { title: '个人中心', icon: 'user' }
-    }]
+    children: [
+      {
+        path: 'profile',
+        component: (resolve) => require(['@/views/system/user/profile/index'], resolve),
+        name: 'Profile',
+        meta: { title: '个人中心', icon: 'user' },
+      },
+    ],
   },
-	{
+  {
     path: '/echarts',
     component: (resolve) => require(['@/views/components/Echarts'], resolve),
-    hidden: true
-  },{
+    hidden: true,
+  },
+  {
     path: '/icons',
     component: (resolve) => require(['@/views/components/icons/index'], resolve),
-    hidden: true
+    hidden: true,
   },
 ]
 
@@ -92,5 +105,5 @@ export default new Router({
   base: process.env.VUE_APP_ROUTER_PREFIX,
   mode: 'history', // 去掉url中的#
   // scrollBehavior: () => ({ y: 0 }),
-  routes: constantRoutes
+  routes: constantRoutes,
 })

@@ -40,6 +40,10 @@
                   <h4>项目起止时间</h4>
                   <p>{{ projectDetails.proMainData.proTimes[0] }} 至 {{ projectDetails.proMainData.proTimes[1] }}</p>
                 </div>
+                <div class="infor-item">
+                  <h4>绩效自评分数</h4>
+                  <p>{{ projectDetails.proMainData.selfEvaluationScore }}</p>
+                </div>
               </div>
               <div class="review-result">
                 <img class="state" :src="stateSrc" alt="" />
@@ -165,9 +169,17 @@
               <el-row :gutter="20">
                 <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
                   <div class="jujian-item" v-if="item.type == 'application'">
-                    <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                    <svg-icon icon-class="pdficon" class-name="fujian-icon" v-if="item.fileExtension == '.pdf'"></svg-icon>
+                    <svg-icon icon-class="txt" class-name="fujian-icon" v-else-if="item.fileExtension == '.txt'"></svg-icon>
+                    <svg-icon icon-class="zipicon" class-name="fujian-icon" v-else-if="item.fileExtension == '.zip'"></svg-icon>
+                    <svg-icon icon-class="png" class-name="fujian-icon" v-else-if="item.fileExtension == '.png'"></svg-icon>
+                    <svg-icon icon-class="rar" class-name="fujian-icon" v-else-if="item.fileExtension == '.rar'"></svg-icon>
+                    <svg-icon icon-class="jpg" class-name="fujian-icon" v-else-if="item.fileExtension == '.jpg'"></svg-icon>
+                    <svg-icon icon-class="xml" class-name="fujian-icon" v-else-if="item.fileExtension == '.xml'"></svg-icon>
+                    <svg-icon icon-class="word" class-name="fujian-icon" v-else></svg-icon>
                     <div class="filename">
                       <h5 :title="item.fileName">{{ item.fileName }}</h5>
+                      <el-button v-if="item.fileExtension == '.pdf'" size="small" type="text" @click="preView(item)">预览</el-button>
                       <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
                     </div>
                     <svg-icon
@@ -207,9 +219,17 @@
                 <el-row :gutter="20">
                   <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
                     <div class="jujian-item" v-if="item.type == 'expert'">
-                      <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                      <svg-icon icon-class="pdficon" class-name="fujian-icon" v-if="item.fileExtension == '.pdf'"></svg-icon>
+                      <svg-icon icon-class="txt" class-name="fujian-icon" v-else-if="item.fileExtension == '.txt'"></svg-icon>
+                      <svg-icon icon-class="zipicon" class-name="fujian-icon" v-else-if="item.fileExtension == '.zip'"></svg-icon>
+                      <svg-icon icon-class="png" class-name="fujian-icon" v-else-if="item.fileExtension == '.png'"></svg-icon>
+                      <svg-icon icon-class="rar" class-name="fujian-icon" v-else-if="item.fileExtension == '.rar'"></svg-icon>
+                      <svg-icon icon-class="jpg" class-name="fujian-icon" v-else-if="item.fileExtension == '.jpg'"></svg-icon>
+                      <svg-icon icon-class="xml" class-name="fujian-icon" v-else-if="item.fileExtension == '.xml'"></svg-icon>
+                      <svg-icon icon-class="word" class-name="fujian-icon" v-else></svg-icon>
                       <div class="filename">
                         <h5 :title="item.fileName">{{ item.fileName }}</h5>
+                        <el-button v-if="item.fileExtension == '.pdf'" size="small" type="text" @click="preView(item)">预览</el-button>
                         <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
                       </div>
                     </div>
@@ -237,9 +257,17 @@
                 <el-row :gutter="20">
                   <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
                     <div class="jujian-item" v-if="item.type == 'meeting'">
-                      <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                      <svg-icon icon-class="pdficon" class-name="fujian-icon" v-if="item.fileExtension == '.pdf'"></svg-icon>
+                      <svg-icon icon-class="txt" class-name="fujian-icon" v-else-if="item.fileExtension == '.txt'"></svg-icon>
+                      <svg-icon icon-class="zipicon" class-name="fujian-icon" v-else-if="item.fileExtension == '.zip'"></svg-icon>
+                      <svg-icon icon-class="png" class-name="fujian-icon" v-else-if="item.fileExtension == '.png'"></svg-icon>
+                      <svg-icon icon-class="rar" class-name="fujian-icon" v-else-if="item.fileExtension == '.rar'"></svg-icon>
+                      <svg-icon icon-class="jpg" class-name="fujian-icon" v-else-if="item.fileExtension == '.jpg'"></svg-icon>
+                      <svg-icon icon-class="xml" class-name="fujian-icon" v-else-if="item.fileExtension == '.xml'"></svg-icon>
+                      <svg-icon icon-class="word" class-name="fujian-icon" v-else></svg-icon>
                       <div class="filename">
                         <h5 :title="item.fileName">{{ item.fileName }}</h5>
+                        <el-button v-if="item.fileExtension == '.pdf'" size="small" type="text" @click="preView(item)">预览</el-button>
                         <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
                       </div>
                     </div>
@@ -274,9 +302,17 @@
                 <el-row :gutter="20">
                   <el-col :lg="8" :sm="12" v-for="(item, index) in projectDetails.fileList" :key="index">
                     <div class="jujian-item" v-if="item.type == 'self'">
-                      <svg-icon icon-class="word" class-name="fujian-icon"></svg-icon>
+                      <svg-icon icon-class="pdficon" class-name="fujian-icon" v-if="item.fileExtension == '.pdf'"></svg-icon>
+                      <svg-icon icon-class="txt" class-name="fujian-icon" v-else-if="item.fileExtension == '.txt'"></svg-icon>
+                      <svg-icon icon-class="zipicon" class-name="fujian-icon" v-else-if="item.fileExtension == '.zip'"></svg-icon>
+                      <svg-icon icon-class="png" class-name="fujian-icon" v-else-if="item.fileExtension == '.png'"></svg-icon>
+                      <svg-icon icon-class="rar" class-name="fujian-icon" v-else-if="item.fileExtension == '.rar'"></svg-icon>
+                      <svg-icon icon-class="jpg" class-name="fujian-icon" v-else-if="item.fileExtension == '.jpg'"></svg-icon>
+                      <svg-icon icon-class="xml" class-name="fujian-icon" v-else-if="item.fileExtension == '.xml'"></svg-icon>
+                      <svg-icon icon-class="word" class-name="fujian-icon" v-else></svg-icon>
                       <div class="filename">
                         <h5 :title="item.fileName">{{ item.fileName }}</h5>
+                        <el-button v-if="item.fileExtension == '.pdf'" size="small" type="text" @click="preView(item)">预览</el-button>
                         <el-button size="small" type="text" @click="downloadFile(item)">下载</el-button>
                       </div>
                       <!-- <svg-icon icon-class="delete" class-name="delete-icon" @click="deleteFile(item.filePath)"></svg-icon> -->
@@ -486,6 +522,7 @@ export default {
         case 'one':
           this.projectDetails.assignmentForm = JSON.parse(JSON.stringify(e1))
           this.projectDetails.proMainData.proName = this.projectDetails.assignmentForm.proName
+          this.projectDetails.proMainData.proTimes = []
           this.projectDetails.proMainData.proTimes.push(this.projectDetails.assignmentForm.proPlan[0].startTime)
           this.projectDetails.proMainData.proTimes.push(
             this.projectDetails.assignmentForm.proPlan[this.projectDetails.assignmentForm.proPlan.length - 1].endTime,
@@ -539,6 +576,12 @@ export default {
     backList() {
       this.$store.dispatch('/managedetails', this.$route)
       this.$router.push({ path: '/manage' })
+    },
+
+    preView(file) {
+      localStorage.setItem('pdfUrl', process.env.VUE_APP_BASE_API + '/project/file/preview?mainid=' + file.mainId + '&fileid=' + file.gid)
+      window.open('/preview')
+      // downReviewFile('/project/file/preview?mainid=' + file.mainId + '&fileid=' + file.gid, file.fileName)
     },
 
     // 下载
