@@ -48,6 +48,11 @@ export const constantRoutes = [
     hidden: true,
   },
   {
+    path: '/singleLogin',
+    component: (resolve) => require(['@/views/singleLogin'], resolve),
+    hidden: true,
+  },
+  {
     path: '/preview',
     component: (resolve) => require(['@/views/preview'], resolve),
     hidden: true,

@@ -6,14 +6,14 @@ import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 
 NProgress.configure({
-  showSpinner: false
+  showSpinner: false,
 })
 
-const whiteList = ['/login', '/auth-redirect', '/bind', '/register', '/demo']
+const whiteList = ['/login', '/auth-redirect', '/bind', '/register', '/demo', '/singleLogin']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  console.log('path=' + to.path);
+  console.log('path=' + to.path)
 
   if (getToken()) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title)
@@ -24,21 +24,24 @@ router.beforeEach((to, from, next) => {
     } else {
       if (store.getters.roles.length === 0) {
         // 判断当前用户是否已拉取完user_info信息
-        store.dispatch('GetInfo').then(() => {
-          store.dispatch('GenerateRoutes').then(accessRoutes => {
-            router.addRoutes(accessRoutes) // 动态添加可访问路由表
-            next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+        store
+          .dispatch('GetInfo')
+          .then(() => {
+            store.dispatch('GenerateRoutes').then((accessRoutes) => {
+              router.addRoutes(accessRoutes) // 动态添加可访问路由表
+              next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+            })
+            //next()
           })
-          //next()
-        }).catch(err => {
-          console.error(err)
-          store.dispatch('LogOut').then(() => {
-            console.log('弹框登录失败')
-            Message.error(err != undefined ? err : '登录失败')
-            next({ path: '/' })
+          .catch((err) => {
+            console.error(err)
+            store.dispatch('LogOut').then(() => {
+              console.log('弹框登录失败')
+              Message.error(err != undefined ? err : '登录失败')
+              next({ path: '/' })
+            })
+            //next(`/login`)
           })
-          //next(`/login`)
-        })
       } else {
         next()
       }
@@ -50,6 +53,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next(`/login?redirect=${to.fullPath}`) // 否则全部重定向到登录页
+      // next('http://ids.hbsy.cn/authserver/login')
       NProgress.done()
     }
   }

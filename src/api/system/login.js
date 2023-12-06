@@ -6,7 +6,7 @@ export function login(username, password, code, uuid) {
     username,
     password,
     code,
-    uuid
+    uuid,
   }
   return request({
     url: '/login',
@@ -19,7 +19,7 @@ export function login(username, password, code, uuid) {
 export function getInfo() {
   return request({
     url: '/getInfo',
-    method: 'get'
+    method: 'get',
   })
 }
 
@@ -27,7 +27,7 @@ export function getInfo() {
 export function logout() {
   return request({
     url: '/LogOut',
-    method: 'POST'
+    method: 'POST',
   })
 }
 
@@ -35,18 +35,27 @@ export function logout() {
 export function getCodeImg() {
   return request({
     url: '/captchaImage',
-    method: 'get'
+    method: 'get',
   })
 }
 
 /**
  * 注册
- * @returns 
+ * @returns
  */
 export function register(data) {
   return request({
     url: '/register',
     method: 'post',
-		data: data
+    data: data,
+  })
+}
+
+// 单点登录
+export function singleLogin(query) {
+  return request({
+    url: '/singleSign',
+    method: 'get',
+    params: query,
   })
 }

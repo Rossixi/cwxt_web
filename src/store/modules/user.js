@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/system/login'
+import { login, logout, getInfo, singleLogin } from '@/api/system/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -41,6 +41,27 @@ const user = {
       const uuid = userInfo.uuid
       return new Promise((resolve, reject) => {
         login(username, password, code, uuid)
+          .then((res) => {
+            if (res.code == 200) {
+              setToken(res.data)
+              //提交上面的mutaions方法
+              commit('SET_TOKEN', res.data)
+              resolve() //then处理
+            } else {
+              console.log('login error ' + res)
+              reject(res) //catch处理
+            }
+          })
+          .catch((err) => {
+            reject(err)
+          })
+      })
+    },
+
+    // 单点登录
+    singleLogin({ commit }, key) {
+      return new Promise((resolve, reject) => {
+        singleLogin({ key: key })
           .then((res) => {
             if (res.code == 200) {
               setToken(res.data)
